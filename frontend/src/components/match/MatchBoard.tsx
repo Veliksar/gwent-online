@@ -1,6 +1,7 @@
 import type { CardDefinition } from '../../api/cards'
 import type { GameMatch, GraveChoice, MatchPlayer } from '../../api/match'
 import { useEffect, useState } from 'react'
+import { CardPreview } from './CardPreview'
 import { GraveCarousel } from './GraveCarousel'
 import { GraveViewCarousel } from './GraveViewCarousel'
 import { MatchField, type GhostCard } from './MatchField'
@@ -39,6 +40,7 @@ export function MatchBoard({
   muliganPending,
   animatingCards,
   ghostCards,
+  opponentPlayedCard,
   onCardClick,
   onRowClick,
   onBoardCardClick,
@@ -74,6 +76,7 @@ export function MatchBoard({
   muliganPending: boolean
   animatingCards: Map<number, string>
   ghostCards: GhostCard[]
+  opponentPlayedCard?: CardDefinition | null
   onCardClick: (handPos: number, cardIndex: number) => void
   onRowClick: (row: RowKey) => void
   onBoardCardClick: (row: RowKey, cardIndex: number) => void
@@ -259,6 +262,12 @@ export function MatchBoard({
 
         {revealCards.length > 0 && (
           <RevealCardsPopup cards={revealCards} cardsByIndex={cardsByIndex} onClose={onCloseReveal} />
+        )}
+
+        {opponentPlayedCard && (
+          <div className="match-op-play-preview">
+            <CardPreview card={opponentPlayedCard} />
+          </div>
         )}
       </div>
     </div>

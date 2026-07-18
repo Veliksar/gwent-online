@@ -152,15 +152,24 @@
   display: block;
 }
 
+/* Превью карты, разыгранной соперником (канон: ui.showPreviewVisuals ~1s) */
+.match-op-play-preview .card-preview {
+  display: block;
+  z-index: 85;
+}
+
+/* Позиция превью как в legacy card-preview.css (правый край доски) */
 .card-preview > .card-lg {
   position: absolute;
-  top: 5%;
-  left: 50%;
+  top: 11.95vw;
+  left: 80.3vw;
 }
 
 .card-preview > .card-description {
-  top: 60%;
-  left: 48%;
+  top: 43.1vw;
+  left: 67.95vw;
+  height: 7.87vw;
+  width: 29.12vw;
   border-radius: 20px;
 }
 

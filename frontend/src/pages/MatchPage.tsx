@@ -62,10 +62,43 @@ export default function MatchPage() {
   const [revealCards, setRevealCards] = useState<number[]>([])
   const [animatingCards, setAnimatingCards] = useState<Map<number, string>>(() => new Map())
   const [ghostCards, setGhostCards] = useState<GhostCard[]>([])
+  const [opponentPlayedCard, setOpponentPlayedCard] = useState<CardDefinition | null>(null)
 
   const syncTurnCalledRef = useRef(false)
   const latestMatchRef = useRef<GameMatch | null>(match)
   const cardsByIndexRef = useRef<Map<number, CardDefinition>>(new Map())
+  const notifTimerRef = useRef<number | null>(null)
+  const notifQueueRef = useRef<string[]>([])
+
+  // Очередь уведомлений как в legacy UI.notification (последовательный показ по ~1.2s)
+  const showNotification = useCallback((name: string) => {
+    if (notifTimerRef.current !== null) {
+      notifQueueRef.current.push(name)
+      return
+    }
+
+    const advance = () => {
+      const next = notifQueueRef.current.shift()
+      if (next !== undefined) {
+        setNotificationName(next)
+        notifTimerRef.current = window.setTimeout(advance, 1250)
+      } else {
+        notifTimerRef.current = null
+        setNotificationName(null)
+      }
+    }
+
+    setNotificationName(name)
+    notifTimerRef.current = window.setTimeout(advance, 1250)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (notifTimerRef.current !== null) {
+        window.clearTimeout(notifTimerRef.current)
+      }
+    }
+  }, [])
 
   const handleGameEnded = useCallback((winnerId: number | null, isDraw: boolean) => {
     const latestMatch = latestMatchRef.current
@@ -162,10 +195,25 @@ export default function MatchPage() {
         }
       }
 
+      // Уведомления смены раунда/хода (канон: Game.startRound / Game.startTurn)
+      if (prevMatch && prevMatch.id === newMatch.id) {
+        if (prevMatch.current_round !== newMatch.current_round) {
+          showNotification('round-start')
+          if (newMatch.current_player_id) {
+            showNotification(newMatch.current_player_id === user?.id ? 'me-turn' : 'op-turn')
+          }
+        } else if (
+          newMatch.current_player_id &&
+          prevMatch.current_player_id !== newMatch.current_player_id
+        ) {
+          showNotification(newMatch.current_player_id === user?.id ? 'me-turn' : 'op-turn')
+        }
+      }
+
       setMatch(newMatch)
       syncTurnCalledRef.current = false
     }
-  }, [setMatch, handleGameEnded, user?.id])
+  }, [setMatch, handleGameEnded, user?.id, showNotification])
 
   useEffect(() => {
     if (match) {
@@ -177,6 +225,19 @@ export default function MatchPage() {
       }
     }
   }, [match?.id, match?.pending_medic])
+
+  // Жребий первого хода при старте матча (канон: Game.coinToss)
+  useEffect(() => {
+    if (!match || match.current_round !== 1 || !match.current_player_id) return
+
+    const boardsEmpty = match.players.every((p) =>
+      p.grave.length === 0 &&
+      (['close', 'ranged', 'siege'] as const).every((row) => (p.board[row] ?? []).length === 0)
+    )
+    if (!boardsEmpty) return
+
+    showNotification(match.current_player_id === user?.id ? 'me-coin' : 'op-coin')
+  }, [match?.id])
 
   useEffect(() => {
     if (match) {
@@ -298,9 +359,18 @@ export default function MatchPage() {
     const channel = echo.private(`match.${match.id}`)
 
     channel.listen('.match.play_card', async (data: { user_id: number; card_id: number | null; row: string }) => {
+      // Канон (Player.playCardAction): карта соперника показывается превью ~1с до обновления поля
+      if (data.card_id !== null && data.user_id !== user?.id) {
+        const playedCard = cardsByIndexRef.current.get(data.card_id)
+        if (playedCard) {
+          setOpponentPlayedCard(playedCard)
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+          setOpponentPlayedCard(null)
+        }
+      }
+
       await refreshState()
       setStatusMsg('')
-      setNotificationName(null)
 
       if (data.card_id === null) return
 
@@ -345,30 +415,44 @@ export default function MatchPage() {
     })
 
     channel.listen('.match.pass', async (data: { user_id: number }) => {
-      await syncTurn()
       if (data.user_id !== user?.id) {
         setStatusMsg('Соперник спасовал')
-        setNotificationName('op-pass')
+        showNotification('op-pass')
       } else {
-        setNotificationName('me-pass')
+        showNotification('me-pass')
       }
+      await syncTurn()
     })
 
     channel.listen('.match.round_end', async (data: { round_winner_id: number | null; current_round: number }) => {
-      await refreshState()
+      // Уведомление итога раунда до обновления состояния, чтобы round-start встал в очередь после него
       if (data.round_winner_id === user?.id) {
         setStatusMsg(`Вы выиграли раунд! Раунд ${data.current_round}`)
-        setNotificationName('win-round')
+        showNotification('win-round')
       } else if (data.round_winner_id) {
         setStatusMsg(`Соперник выиграл раунд. Раунд ${data.current_round}`)
-        setNotificationName('lose-round')
+        showNotification('lose-round')
       } else {
         setStatusMsg(`Ничья в раунде. Раунд ${data.current_round}`)
-        setNotificationName('draw-round')
+        showNotification('draw-round')
       }
+      await refreshState()
     })
 
     channel.listen('.match.leader_used', async (data: { user_id: number; leader_result?: LeaderResult | null }) => {
+      // Канон (Player.activateLeader): карта лидера показывается превью ~1.5с
+      if (data.user_id !== user?.id) {
+        const opPlayer = latestMatchRef.current?.players.find((p) => p.user_id === data.user_id)
+        const leaderCard = opPlayer?.leader_index != null
+          ? cardsByIndexRef.current.get(opPlayer.leader_index)
+          : undefined
+        if (leaderCard) {
+          setOpponentPlayedCard(leaderCard)
+          await new Promise((resolve) => setTimeout(resolve, 1500))
+          setOpponentPlayedCard(null)
+        }
+      }
+
       await refreshState()
       if (data.user_id !== user?.id) {
         setStatusMsg('Соперник использовал лидера')
@@ -403,11 +487,9 @@ export default function MatchPage() {
       if (data.pending_medic || data.match?.pending_medic) {
         setFsm({ mode: 'medic_select' })
         setStatusMsg('Выберите карту из кладбища для медика')
-        setNotificationName(null)
       } else {
         setFsm({ mode: 'idle' })
         setStatusMsg('')
-        setNotificationName(null)
       }
     },
     onError: (err: unknown) => {
@@ -424,7 +506,6 @@ export default function MatchPage() {
       applyMatchResponse(data)
       setFsm({ mode: 'idle' })
       setStatusMsg('')
-      setNotificationName(null)
     },
     onError: (err: unknown) => {
       const msg = err && typeof err === 'object' && 'response' in err
@@ -460,7 +541,6 @@ export default function MatchPage() {
       applyMatchResponse(data)
       setFsm({ mode: 'idle' })
       setStatusMsg('')
-      setNotificationName('me-turn')
     },
     onError: (err: unknown) => {
       const msg = err && typeof err === 'object' && 'response' in err
@@ -473,11 +553,8 @@ export default function MatchPage() {
   const passMutation = useMutation({
     mutationFn: matchApi.pass,
     onSuccess: (data) => {
+      showNotification('me-pass')
       applyMatchResponse(data)
-      if (data.game_ended) {
-        return
-      }
-      setNotificationName('me-pass')
     },
     onError: () => setStatusMsg('Ошибка при пасе'),
   })
@@ -564,13 +641,11 @@ export default function MatchPage() {
     if (card?.abilities.includes('decoy')) {
       setFsm({ mode: 'decoy_select', handPos, cardIndex })
       setStatusMsg('Выберите свою негероическую карту на поле для Decoy')
-      setNotificationName(null)
       return
     }
 
     setFsm({ mode: 'card_selected', handPos, cardIndex })
     setStatusMsg('')
-    setNotificationName(null)
   }
 
   const handleRowClick = (row: RowKey) => {
@@ -616,6 +691,7 @@ export default function MatchPage() {
       muliganPending={redrawMutation.isPending || redrawSkipMutation.isPending}
       animatingCards={animatingCards}
       ghostCards={ghostCards}
+      opponentPlayedCard={opponentPlayedCard}
       onCardClick={handleCardClick}
       onRowClick={handleRowClick}
       onBoardCardClick={handleBoardCardClick}

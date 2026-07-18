@@ -736,7 +736,8 @@ class MatchController extends Controller
                 'hand_count'   => count($ps['hand'] ?? []),
                 'board'        => $ps['board'] ?? ['close' => [], 'ranged' => [], 'siege' => []],
                 'board_display'=> $this->formatBoardDisplay($state, $uid),
-                'grave'             => ($uid === $viewerUserId) ? ($ps['grave'] ?? []) : [],
+                // Кладбище - открытая информация (канон: обе стопки видны и просматриваются)
+                'grave'             => $ps['grave'] ?? [],
                 'deck_count'        => count($ps['deck'] ?? []),
                 'redraw_remaining'  => ($uid === $viewerUserId) ? ($ps['redraw_remaining'] ?? 0) : 0,
             ];

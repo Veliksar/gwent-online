@@ -647,12 +647,38 @@
   50%       { background: rgba(255, 220, 0, 0.18); }
 }
 
+/* Погодный overlay ряда (легаси .row-weather + overlay_*.png из panel-mid.css) */
+.match-row-weather {
+  position: absolute;
+  top: 5%;
+  left: 5.75%;
+  width: 94.25%;
+  height: 100%;
+  pointer-events: none;
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.match-row-weather-frost {
+  background-image: url('/img/icons/overlay_frost.png');
+}
+
+.match-row-weather-rain {
+  background-image: url('/img/icons/overlay_rain.png');
+}
+
+.match-row-weather-fog {
+  background-image: url('/img/icons/overlay_fog.png');
+}
+
 .match-row-weather-active::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: rgba(19, 42, 63, 0.45);
+  background: rgba(19, 42, 63, 0.2);
   z-index: 1;
 }
 
@@ -699,6 +725,7 @@
 .match-row-special .card {
   height: 100%;
   width: auto;
+  aspect-ratio: 485 / 690;
   max-height: 6.9vw;
   max-width: 4.85vw;
   min-height: 0;

@@ -1,6 +1,9 @@
 import { iconUrl } from '../../utils/cardAssets'
 
 const NOTIFICATION_TEXT: Record<string, string> = {
+  'me-coin': 'You will go first',
+  'op-coin': 'Your opponent will go first',
+  'round-start': 'Round Start',
   'me-pass': 'Round passed',
   'op-pass': 'Your opponent has passed',
   'win-round': 'You won the round!',
@@ -16,6 +19,9 @@ const NOTIFICATION_TEXT: Record<string, string> = {
 }
 
 const NOTIFICATION_ICON: Record<string, string> = {
+  'me-coin': 'notif_me_coin',
+  'op-coin': 'notif_op_coin',
+  'round-start': 'notif_round_start',
   'me-pass': 'notif_round_passed',
   'op-pass': 'notif_round_passed',
   'win-round': 'notif_win_round',

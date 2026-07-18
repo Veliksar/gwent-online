@@ -48,6 +48,7 @@ function MatchRow({
   const key = `${player.user_id}_${row}`
   const weatherActive = match.weather[row]
   const hornActive = !!match.horns[key] || !!match.leader_horns[key]
+  const mardroemeActive = !!match.mardroeme_rows[key]
   const cards = player.board_display[row] ?? []
   const ownerKey = owner === 'me' ? 'me' : 'op'
   const rowGhosts = ghostCards.filter((g) => g.owner === ownerKey && g.row === row)
@@ -67,14 +68,24 @@ function MatchRow({
     .filter(Boolean)
     .join(' ')
 
-  const hornCard = cardsByIndex.get(5)
+  // Канон (Card.isSpecial): в спец-слоте ряда лежит Commander's Horn (5) или Mardroeme (202)
+  const specialCard = hornActive
+    ? cardsByIndex.get(5)
+    : mardroemeActive
+      ? cardsByIndex.get(202)
+      : undefined
+
+  const weatherOverlay: Record<RowKey, string> = { close: 'frost', ranged: 'fog', siege: 'rain' }
 
   return (
     <div className={rowCls} onClick={canDrop ? onRowClick : undefined}>
+      {weatherActive && (
+        <div className={`match-row-weather match-row-weather-${weatherOverlay[row]}`} />
+      )}
       <div className="match-row-score">{player.row_scores[row]}</div>
       <div className={specialCls}>
-        {hornActive && hornCard && (
-          <GwentCard card={hornCard} power={0} />
+        {specialCard && (
+          <GwentCard card={specialCard} power={0} />
         )}
       </div>
       <div className="match-row-cards">
