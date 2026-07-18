@@ -184,8 +184,9 @@ class MatchController extends Controller
             if (!isset($newState['pending_medic']) || $newState['pending_medic'] === null) {
                 if (!$opponent->passed) {
                     $match->update(['current_player_id' => $opponent->user_id]);
-                    $this->matchFlow->resetTurnTimer($match->fresh());
                 }
+                // Таймер обновляется и когда ход остаётся у игрока (соперник спасовал)
+                $this->matchFlow->resetTurnTimer($match->fresh());
             }
         });
 
@@ -440,7 +441,7 @@ class MatchController extends Controller
             ->first();
 
         if (!$player) {
-            return response()->json(['match' => null]);
+            return $this->finishedMatchResponse($request, $user->id);
         }
 
         $match = $this->matchFlow->ensureTurnFresh($player->match);
@@ -538,7 +539,7 @@ class MatchController extends Controller
             ->first();
 
         if (!$player) {
-            return response()->json(['match' => null]);
+            return $this->finishedMatchResponse($request, $user->id);
         }
 
         $match = $this->matchFlow->ensureTurnFresh($player->match);
@@ -749,6 +750,12 @@ class MatchController extends Controller
             $turnRemaining = max(0, $this->matchFlow->turnTimeoutSeconds() - $elapsed);
         }
 
+        // Финальный таймер раунда (оба спасовали)
+        $roundEndingSeconds = null;
+        if (($state['round_ending_at'] ?? null) !== null) {
+            $roundEndingSeconds = max(0, (int) ceil(now()->diffInSeconds(\Illuminate\Support\Carbon::parse($state['round_ending_at']), false)));
+        }
+
         return [
             'id'                  => $match->id,
             'mode'                => $match->mode,
@@ -757,6 +764,8 @@ class MatchController extends Controller
             'current_player_id'   => $match->current_player_id,
             'players'             => $players,
             'weather'             => $state['weather'] ?? ['close' => false, 'ranged' => false, 'siege' => false],
+            'weather_cards'       => $state['weather_cards'] ?? [],
+            'round_ending_seconds' => $roundEndingSeconds,
             'horns'               => $state['horns'] ?? [],
             'leader_horns'        => $state['leader_horns'] ?? [],
             'mardroeme_rows'      => $state['mardroeme_rows'] ?? [],
@@ -811,5 +820,45 @@ class MatchController extends Controller
     private function hasPendingFirstChoice(GameMatch $match): bool
     {
         return ($match->state_snapshot['scoiatael_first_choice_user_id'] ?? null) !== null;
+    }
+
+    /**
+     * Матч клиента завершился, а Echo-событие могло потеряться: если клиент
+     * передал match_id известного ему матча, возвращаем итог вместо {match: null},
+     * чтобы он не застрял на игровом столе.
+     */
+    private function finishedMatchResponse(Request $request, int $userId): JsonResponse
+    {
+        $knownId = (int) $request->input('match_id', 0);
+        if ($knownId <= 0) {
+            return response()->json(['match' => null]);
+        }
+
+        $known = GameMatch::with('result')
+            ->where('id', $knownId)
+            ->whereHas('players', fn($q) => $q->where('user_id', $userId))
+            ->first();
+
+        if (!$known) {
+            return response()->json(['match' => null]);
+        }
+
+        if ($known->status === GameMatch::STATUS_FINISHED) {
+            return response()->json([
+                'match'      => null,
+                'game_ended' => true,
+                'winner_id'  => $known->result?->winner_user_id,
+                'is_draw'    => $known->result?->is_draw ?? false,
+            ]);
+        }
+
+        if ($known->status === GameMatch::STATUS_CANCELLED) {
+            return response()->json([
+                'match'     => null,
+                'cancelled' => true,
+            ]);
+        }
+
+        return response()->json(['match' => null]);
     }
 }

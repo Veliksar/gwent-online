@@ -130,6 +130,7 @@ export default function MatchPage() {
     game_ended?: boolean
     winner_id?: number | null
     is_draw?: boolean
+    cancelled?: boolean
   }) => {
     const prevMatch = latestMatchRef.current
 
@@ -139,6 +140,13 @@ export default function MatchPage() {
 
     if (data.game_ended) {
       handleGameEnded(data.winner_id ?? null, data.is_draw ?? false)
+      return
+    }
+
+    if (data.cancelled) {
+      clearMatch()
+      clearLobby()
+      navigate('/')
       return
     }
 
@@ -213,7 +221,7 @@ export default function MatchPage() {
       setMatch(newMatch)
       syncTurnCalledRef.current = false
     }
-  }, [setMatch, handleGameEnded, user?.id, showNotification])
+  }, [setMatch, handleGameEnded, user?.id, showNotification, clearMatch, clearLobby, navigate])
 
   useEffect(() => {
     if (match) {
@@ -291,7 +299,7 @@ export default function MatchPage() {
 
   const refreshState = useCallback(async () => {
     try {
-      const data = await matchApi.getState()
+      const data = await matchApi.getState(latestMatchRef.current?.id)
       applyMatchResponse(data)
     } catch {
     }
@@ -299,7 +307,7 @@ export default function MatchPage() {
 
   const syncTurn = useCallback(async () => {
     try {
-      const data = await matchApi.syncTurn()
+      const data = await matchApi.syncTurn(latestMatchRef.current?.id)
       applyMatchResponse(data)
     } catch {
     }
@@ -620,6 +628,10 @@ export default function MatchPage() {
   const opponent = match.players.find((p) => p.user_id !== user?.id)
   const isMyTurn = match.current_player_id === user?.id
 
+  const roundEndingMsg = match.round_ending_seconds != null
+    ? `Оба игрока спасовали - раунд завершается через ${match.round_ending_seconds} сек`
+    : ''
+
   const selectedCard = fsm.mode === 'card_selected' || fsm.mode === 'decoy_select' ? fsm.cardIndex : null
   const selectedHandPos = fsm.mode === 'card_selected' || fsm.mode === 'decoy_select' ? fsm.handPos : null
   const selectedCardDefinition = selectedCard !== null ? cardsByIndex.get(selectedCard) : undefined
@@ -678,7 +690,7 @@ export default function MatchPage() {
       selectedRows={selectedRows}
       spyRow={spyRow}
       decoySelect={fsm.mode === 'decoy_select'}
-      statusMsg={statusMsg}
+      statusMsg={statusMsg || roundEndingMsg}
       notificationName={notificationName}
       turnSecondsLeft={turnSecondsLeft}
       passPending={passMutation.isPending}

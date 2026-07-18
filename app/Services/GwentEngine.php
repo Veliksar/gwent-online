@@ -13,6 +13,8 @@ class GwentEngine
         $state = [
             'players' => [],
             'weather' => ['close' => false, 'ranged' => false, 'siege' => false],
+            'weather_cards' => [],
+            'special_cards' => [],
             'horns' => [],
             'leader_horns' => [],
             'mardroeme_rows' => [],
@@ -61,7 +63,7 @@ class GwentEngine
         $state = self::applyGameStartLeaderPassives($state, $playerIds);
         $state = self::initializeFirstPlayer($state, $playerIds, $options);
 
-        return $state;
+        return self::sortAllHands($state);
     }
 
     public static function reDrawCard(array $state, int $userId, int $handPos): array
@@ -89,7 +91,7 @@ class GwentEngine
 
         $state['players'][$userId]['redraw_remaining']--;
 
-        return $state;
+        return self::sortHand($state, $userId);
     }
 
     public static function skipRedraw(array $state, int $userId): array
@@ -125,13 +127,18 @@ class GwentEngine
         if (in_array('spy', $abilities)) {
             $state = self::applySpy($state, $userId, $opponentId, $cardIndex, $row, $card);
         } elseif (in_array('frost', $abilities) || in_array('fog', $abilities) || in_array('rain', $abilities)) {
-            $state = self::applyWeather($state, $card);
+            $state = self::applyWeather($state, $card, $userId, $cardIndex);
         } elseif (in_array('clear', $abilities)) {
-            $state = self::applyClearWeather($state);
+            $state = self::applyClearWeather($state, $userId, $cardIndex);
         } elseif (in_array('horn', $abilities) && $card['row'] === '') {
             $state = self::applyHorn($state, $userId, $row, $cardIndex);
+        } elseif (in_array('mardroeme', $abilities) && $card['row'] === '') {
+            $state = self::applyMardroeme($state, $userId, $row, $cardIndex);
         } elseif (in_array('mardroeme', $abilities)) {
-            $state = self::applyMardroeme($state, $userId, $row);
+            // Юнит с mardroeme (Ermion): ставится на ряд и применяет эффект, слот спецкарты не занимает
+            $state = self::placeCard($state, $userId, $cardIndex, $row, $card);
+            $unitRow = in_array($card['row'], self::ROWS) ? $card['row'] : (in_array($row, self::ROWS) ? $row : 'close');
+            $state = self::applyMardroemeEffect($state, $userId, $unitRow);
         } elseif (in_array('scorch', $abilities) && $card['row'] === '') {
             $state = self::applyGlobalScorch($state);
             $state['players'][$userId]['grave'][] = $cardIndex;
@@ -163,7 +170,7 @@ class GwentEngine
 
         $state['turn_number'] = ($state['turn_number'] ?? 0) + 1;
 
-        return $state;
+        return self::sortAllHands($state);
     }
 
     public static function activateLeader(array $state, int $userId, int $opponentId, array $choices = []): array
@@ -246,7 +253,7 @@ class GwentEngine
 
         $state['turn_number'] = ($state['turn_number'] ?? 0) + 1;
 
-        return $state;
+        return self::sortAllHands($state);
     }
 
     public static function chooseFirstPlayer(array $state, int $chooserUserId, bool $preferFirst, array $playerIds): array
@@ -281,7 +288,9 @@ class GwentEngine
     public static function medicResolve(array $state, int $userId, int $graveIndex): array
     {
         $state['pending_medic'] = null;
-        return self::applyMedic($state, $userId, $graveIndex);
+        $state = self::applyMedic($state, $userId, $graveIndex);
+
+        return self::sortAllHands($state);
     }
 
     public static function calculateScores(array $state): array
@@ -392,6 +401,24 @@ class GwentEngine
             $state['players'][$uid]['passed'] = false;
         }
 
+        // Канон Row.clear: спецкарта из слота уходит в кладбище владельца
+        foreach (($state['special_cards'] ?? []) as $key => $ci) {
+            $uid = (int) explode('_', (string) $key)[0];
+            if (isset($state['players'][$uid])) {
+                $state['players'][$uid]['grave'][] = (int) $ci;
+            }
+        }
+        $state['special_cards'] = [];
+
+        // Канон Weather.clearWeather при endRound: погодные карты в кладбища владельцев
+        foreach (($state['weather_cards'] ?? []) as $wc) {
+            $uid = (int) $wc['owner'];
+            if (isset($state['players'][$uid])) {
+                $state['players'][$uid]['grave'][] = (int) $wc['index'];
+            }
+        }
+        $state['weather_cards'] = [];
+
         $state['weather'] = ['close' => false, 'ranged' => false, 'siege' => false];
         $state['pending_medic'] = null;
         $state['leader_result'] = null;
@@ -401,7 +428,7 @@ class GwentEngine
             $state = self::applyRoundStartPassives($state, $playerIds, $winnerId);
         }
 
-        return $state;
+        return self::sortAllHands($state);
     }
 
     public static function getValidGraveMedic(array $state, int $userId): array
@@ -579,29 +606,71 @@ class GwentEngine
         return $state;
     }
 
-    private static function applyWeather(array $state, array $card): array
+    private static function applyWeather(array $state, array $card, ?int $ownerId = null, ?int $cardIndex = null): array
     {
         foreach ($card['abilities'] as $ability) {
             if (isset(self::WEATHER_ROW[$ability])) {
                 $state['weather'][self::WEATHER_ROW[$ability]] = true;
             }
         }
+
+        if ($ownerId === null || $cardIndex === null) {
+            return $state;
+        }
+
+        // Канон Weather.addCard: дубликат по имени сразу уходит в кладбище владельца
+        foreach (($state['weather_cards'] ?? []) as $wc) {
+            $existing = GwentCardData::get((int) $wc['index']);
+            if ($existing && $existing['name'] === $card['name']) {
+                $state['players'][$ownerId]['grave'][] = $cardIndex;
+                return $state;
+            }
+        }
+
+        $state['weather_cards'][] = ['index' => $cardIndex, 'owner' => $ownerId];
+
         return $state;
     }
 
-    private static function applyClearWeather(array $state): array
+    private static function applyClearWeather(array $state, ?int $ownerId = null, ?int $clearCardIndex = null): array
     {
+        // Канон Weather.clearWeather: карты из погодного слота уходят в кладбища владельцев
+        foreach (($state['weather_cards'] ?? []) as $wc) {
+            $owner = (int) $wc['owner'];
+            if (isset($state['players'][$owner])) {
+                $state['players'][$owner]['grave'][] = (int) $wc['index'];
+            }
+        }
+        $state['weather_cards'] = [];
+
+        if ($ownerId !== null && $clearCardIndex !== null) {
+            $state['players'][$ownerId]['grave'][] = $clearCardIndex;
+        }
+
         $state['weather'] = ['close' => false, 'ranged' => false, 'siege' => false];
         return $state;
+    }
+
+    private static function specialSlotOccupied(array $state, string $key): bool
+    {
+        return isset($state['special_cards'][$key])
+            || ($state['horns'][$key] ?? false)
+            || ($state['leader_horns'][$key] ?? false);
     }
 
     private static function applyHorn(array $state, int $userId, string $row, int $cardIndex): array
     {
         $effectiveRow = in_array($row, self::ROWS) ? $row : 'close';
         $key = $userId . '_' . $effectiveRow;
-        if (!($state['horns'][$key] ?? false)) {
-            $state['horns'][$key] = true;
+
+        // Канон: спец-слот ряда вмещает одну карту (Row.special !== null - ряд недоступен)
+        if (self::specialSlotOccupied($state, $key)) {
+            throw new \InvalidArgumentException('В этом ряду уже есть спецкарта.');
         }
+
+        $state['horns'][$key] = true;
+        $state['special_cards'][$key] = $cardIndex;
+
         return $state;
     }
 
@@ -694,8 +763,110 @@ class GwentEngine
 
         array_splice($state['players'][$userId]['grave'], $gravePos, 1);
 
+        // Канон (abilities.js medic): воскрешённая карта разыгрывается заново
+        // (autoplay + placed-хуки: шпион уходит на сторону соперника с добором,
+        // медик продолжает цепочку, muster призывает копии, scorch_* жгут ряд)
+        $abilities = $card['abilities'];
         $row = in_array($card['row'], self::ROWS) ? $card['row'] : 'close';
-        $state['players'][$userId]['board'][$row][] = $ci;
+        $opponentId = self::opponentOf($state, $userId);
+
+        if ($opponentId !== null && in_array('spy', $abilities)) {
+            return self::applySpy($state, $userId, $opponentId, $ci, $row, $card);
+        }
+
+        if (in_array('muster', $abilities)) {
+            return self::applyMuster($state, $userId, $ci, $row, $card);
+        }
+
+        if ($opponentId !== null && in_array('scorch_c', $abilities)) {
+            $state = self::placeCard($state, $userId, $ci, $row, $card);
+            return self::applyRowScorch($state, $opponentId, 'close');
+        }
+
+        if ($opponentId !== null && in_array('scorch_r', $abilities)) {
+            $state = self::placeCard($state, $userId, $ci, $row, $card);
+            return self::applyRowScorch($state, $opponentId, 'ranged');
+        }
+
+        if ($opponentId !== null && in_array('scorch_s', $abilities)) {
+            $state = self::placeCard($state, $userId, $ci, $row, $card);
+            return self::applyRowScorch($state, $opponentId, 'siege');
+        }
+
+        if (in_array('medic', $abilities)) {
+            $state = self::placeCard($state, $userId, $ci, $row, $card);
+            if (self::getValidGraveMedic($state, $userId) !== []) {
+                $state['pending_medic'] = ['user_id' => $userId, 'row' => $row];
+            }
+            return $state;
+        }
+
+        return self::placeCard($state, $userId, $ci, $row, $card);
+    }
+
+    private static function opponentOf(array $state, int $userId): ?int
+    {
+        foreach (array_keys($state['players'] ?? []) as $uid) {
+            if ((int) $uid !== $userId) {
+                return (int) $uid;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Жёсткий порядок руки (фаза 12): карты действий (спецкарты, погода),
+     * затем обычные отряды, в конце - золотые (герои).
+     * Внутри группы - по силе и имени (как канонический Card.compare).
+     */
+    public static function sortHand(array $state, int $userId): array
+    {
+        $hand = $state['players'][$userId]['hand'] ?? [];
+        usort($hand, function (int $a, int $b) {
+            $ca = GwentCardData::get($a);
+            $cb = GwentCardData::get($b);
+
+            $groupDiff = self::handSortGroup($ca) <=> self::handSortGroup($cb);
+            if ($groupDiff !== 0) {
+                return $groupDiff;
+            }
+
+            $strengthDiff = (int) ($ca['strength'] ?? 0) <=> (int) ($cb['strength'] ?? 0);
+            if ($strengthDiff !== 0) {
+                return $strengthDiff;
+            }
+
+            return strcmp($ca['name'] ?? '', $cb['name'] ?? '');
+        });
+        $state['players'][$userId]['hand'] = $hand;
+
+        return $state;
+    }
+
+    private static function handSortGroup(?array $card): int
+    {
+        if (!$card) {
+            return 2;
+        }
+        if ($card['deck'] === 'special') {
+            return 0;
+        }
+        if ($card['deck'] === 'weather') {
+            return 1;
+        }
+        if (in_array('hero', $card['abilities'])) {
+            return 3;
+        }
+
+        return 2;
+    }
+
+    private static function sortAllHands(array $state): array
+    {
+        foreach (array_keys($state['players'] ?? []) as $uid) {
+            $state = self::sortHand($state, (int) $uid);
+        }
 
         return $state;
     }
@@ -889,16 +1060,31 @@ class GwentEngine
     private static function applyLeaderHorn(array $state, int $userId, string $row): array
     {
         $key = $userId . '_' . $row;
-        if (!($state['horns'][$key] ?? false) && !($state['leader_horns'][$key] ?? false)) {
+        // Канон Row.leaderHorn: молча пропускается, если спец-слот занят
+        if (!self::specialSlotOccupied($state, $key)) {
             $state['leader_horns'][$key] = true;
         }
 
         return $state;
     }
 
-    private static function applyMardroeme(array $state, int $userId, string $row): array
+    private static function applyMardroeme(array $state, int $userId, string $row, int $cardIndex): array
     {
         $effectiveRow = in_array($row, self::ROWS) ? $row : 'close';
+        $key = $userId . '_' . $effectiveRow;
+
+        // Канон: спец-слот ряда вмещает одну карту
+        if (self::specialSlotOccupied($state, $key)) {
+            throw new \InvalidArgumentException('В этом ряду уже есть спецкарта.');
+        }
+
+        $state['special_cards'][$key] = $cardIndex;
+
+        return self::applyMardroemeEffect($state, $userId, $effectiveRow);
+    }
+
+    private static function applyMardroemeEffect(array $state, int $userId, string $effectiveRow): array
+    {
         $state['mardroeme_rows'][$userId . '_' . $effectiveRow] = true;
 
         $nextCards = [];
@@ -924,7 +1110,7 @@ class GwentEngine
             $card = GwentCardData::get($ci);
             if ($card && $card['name'] === $weatherName) {
                 array_splice($state['players'][$userId]['deck'], $pos, 1);
-                return self::applyWeather($state, $card);
+                return self::applyWeather($state, $card, $userId, $ci);
             }
         }
 
@@ -942,7 +1128,10 @@ class GwentEngine
                 continue;
             }
             array_splice($state['players'][$userId]['deck'], $pos, 1);
-            return self::applyWeather($state, $card);
+            if (in_array('clear', $card['abilities'])) {
+                return self::applyClearWeather($state, $userId, $ci);
+            }
+            return self::applyWeather($state, $card, $userId, $ci);
         }
 
         if ($choiceIndex !== null) {

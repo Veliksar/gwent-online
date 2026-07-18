@@ -80,6 +80,11 @@ export interface SandboxMeta {
   bot_user_id: number
 }
 
+export interface WeatherCardEntry {
+  index: number
+  owner: number
+}
+
 export interface GameMatch {
   id: number
   mode: 'bot' | 'pvp' | 'sandbox'
@@ -88,6 +93,8 @@ export interface GameMatch {
   current_player_id: number | null
   players: MatchPlayer[]
   weather: WeatherState
+  weather_cards: WeatherCardEntry[]
+  round_ending_seconds: number | null
   horns: Record<string, boolean>
   leader_horns: Record<string, boolean>
   mardroeme_rows: Record<string, boolean>
@@ -168,13 +175,15 @@ export const matchApi = {
     return response.data
   },
 
-  getState: async (): Promise<{ match: GameMatch | null; game_ended?: boolean; winner_id?: number | null; is_draw?: boolean }> => {
-    const response = await apiClient.get('/match/state')
+  getState: async (knownMatchId?: number): Promise<{ match: GameMatch | null; game_ended?: boolean; winner_id?: number | null; is_draw?: boolean; cancelled?: boolean }> => {
+    const response = await apiClient.get('/match/state', {
+      params: knownMatchId ? { match_id: knownMatchId } : undefined,
+    })
     return response.data
   },
 
-  syncTurn: async (): Promise<{ match: GameMatch | null; game_ended?: boolean; winner_id?: number | null; is_draw?: boolean }> => {
-    const response = await apiClient.post('/match/sync-turn')
+  syncTurn: async (knownMatchId?: number): Promise<{ match: GameMatch | null; game_ended?: boolean; winner_id?: number | null; is_draw?: boolean; cancelled?: boolean }> => {
+    const response = await apiClient.post('/match/sync-turn', knownMatchId ? { match_id: knownMatchId } : {})
     return response.data
   },
 

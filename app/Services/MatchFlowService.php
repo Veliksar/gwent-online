@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class MatchFlowService
 {
+    private const ROUND_END_DELAY_SECONDS = 10;
+
     public function turnTimeoutSeconds(): int
     {
         return (int) config('gwent.turn_timeout_seconds', 180);
@@ -49,12 +51,23 @@ class MatchFlowService
             $match->status === GameMatch::STATUS_IN_PROGRESS
             && $match->current_player_id
             && !$match->turn_started_at
+            && ($match->state_snapshot['round_ending_at'] ?? null) === null
         ) {
             $this->resetTurnTimer($match);
             $match = $match->fresh(['players.user.profile']);
         }
 
         if (($match->state_snapshot['scoiatael_first_choice_user_id'] ?? null) !== null) {
+            return $match;
+        }
+
+        // Финальный 10-сек таймер раунда: оба спасовали, ждём подсчёта очков
+        $roundEndingAt = $match->state_snapshot['round_ending_at'] ?? null;
+        if ($match->status === GameMatch::STATUS_IN_PROGRESS && $roundEndingAt !== null) {
+            if (now()->gte(\Illuminate\Support\Carbon::parse($roundEndingAt))) {
+                $match = $this->endRound($match)['match']->fresh(['players.user.profile']);
+            }
+
             return $match;
         }
 
@@ -68,6 +81,50 @@ class MatchFlowService
             $guard++;
             $match = $this->applyTimeoutAction($match)['match'];
             $match = $match->fresh(['players.user.profile']);
+        }
+
+        return $this->autoPassIfHandEmpty($match);
+    }
+
+    /**
+     * Автопас при пустой руке (фаза 12): если на старте хода у игрока 0 карт
+     * (и лидер недоступен), ход завершается пасом без ожидания таймера.
+     */
+    public function autoPassIfHandEmpty(GameMatch $match): GameMatch
+    {
+        $guard = 0;
+
+        while ($match->status === GameMatch::STATUS_IN_PROGRESS && $guard < 2) {
+            $guard++;
+
+            $userId = (int) $match->current_player_id;
+            $state = $match->state_snapshot ?? [];
+
+            if (
+                !$userId
+                || ($state['pending_medic'] ?? null) !== null
+                || ($state['round_ending_at'] ?? null) !== null
+                || ($state['scoiatael_first_choice_user_id'] ?? null) !== null
+            ) {
+                break;
+            }
+
+            $playerState = $state['players'][$userId] ?? null;
+            if ($playerState === null || ($playerState['hand'] ?? null) !== []) {
+                break;
+            }
+
+            if (($playerState['passed'] ?? false)) {
+                break;
+            }
+
+            $leaderAvailable = !($playerState['leader_used'] ?? false)
+                && !($playerState['leader_disabled'] ?? false);
+            if ($leaderAvailable) {
+                break;
+            }
+
+            $match = $this->applyPass($match, $userId, true)['match']->fresh(['players.user.profile']);
         }
 
         return $match;
@@ -110,7 +167,7 @@ class MatchFlowService
         $opponent = $match->players->firstWhere('user_id', '!=', $userId);
 
         if ($opponent && $opponent->passed) {
-            return $this->endRound($match);
+            return $this->scheduleRoundEnd($match);
         }
 
         if ($opponent) {
@@ -123,6 +180,32 @@ class MatchFlowService
             'round_ended'  => false,
             'game_ended'   => false,
             'auto_pass'    => $auto,
+        ];
+    }
+
+    /**
+     * Оба игрока спасовали (фаза 12): раунд завершается через 10-секундный
+     * финальный таймер, а не мгновенно. Обрабатывается в ensureTurnFresh.
+     */
+    private function scheduleRoundEnd(GameMatch $match): array
+    {
+        $match = $match->fresh(['players.user.profile']);
+        $state = $match->state_snapshot ?? [];
+
+        if (($state['round_ending_at'] ?? null) === null) {
+            $state['round_ending_at'] = now()->addSeconds(self::ROUND_END_DELAY_SECONDS)->toIso8601String();
+            $match->update([
+                'state_snapshot'    => $state,
+                'current_player_id' => null,
+                'turn_started_at'   => null,
+            ]);
+        }
+
+        return [
+            'match'         => $match->fresh(['players.user.profile']),
+            'round_ended'   => false,
+            'game_ended'    => false,
+            'round_pending' => true,
         ];
     }
 
@@ -140,29 +223,28 @@ class MatchFlowService
         $newState = GwentEngine::medicResolve($state, $userId, $gravePos);
         $scores = GwentEngine::calculateScores($newState);
 
-        DB::transaction(function () use ($match, $newState, $scores, $userId, $opponent, $player) {
+        // Цепочка медиков (канон): воскрешённый медик снова ждёт выбора из кладбища
+        $medicChain = ($newState['pending_medic']['user_id'] ?? null) === $userId;
+
+        DB::transaction(function () use ($match, $newState, $scores, $userId, $opponent, $player, $medicChain) {
             $match->update(['state_snapshot' => $newState]);
             $player->update(['round_score' => $scores[$userId] ?? 0]);
             $opponent->update(['round_score' => $scores[$opponent->user_id] ?? 0]);
 
-            if (!$opponent->passed) {
+            if (!$medicChain && !$opponent->passed) {
                 $match->update(['current_player_id' => $opponent->user_id]);
             }
         });
 
         $match = $match->fresh(['players.user.profile']);
-
-        if ($opponent->passed) {
-            return $this->endRound($match);
-        }
-
         $this->resetTurnTimer($match);
 
         return [
-            'match'       => $match->fresh(['players.user.profile']),
-            'round_ended' => false,
-            'game_ended'  => false,
-            'auto_medic'  => $auto,
+            'match'         => $match->fresh(['players.user.profile']),
+            'round_ended'   => false,
+            'game_ended'    => false,
+            'auto_medic'    => $auto,
+            'pending_medic' => $medicChain,
         ];
     }
 
@@ -173,6 +255,7 @@ class MatchFlowService
         $playerIds = $players->pluck('user_id')->toArray();
 
         $state = GwentEngine::endRound($match->state_snapshot ?? [], $playerIds);
+        unset($state['round_ending_at']);
 
         $p1 = $players[0];
         $p2 = $players[1];
