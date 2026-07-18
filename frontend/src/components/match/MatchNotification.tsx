@@ -1,21 +1,21 @@
 import { iconUrl } from '../../utils/cardAssets'
 
 const NOTIFICATION_TEXT: Record<string, string> = {
-  'me-coin': 'You will go first',
-  'op-coin': 'Your opponent will go first',
-  'round-start': 'Round Start',
-  'me-pass': 'Round passed',
-  'op-pass': 'Your opponent has passed',
-  'win-round': 'You won the round!',
-  'lose-round': 'Your opponent won the round',
-  'draw-round': 'The round ended in a draw',
-  'me-turn': 'Your turn!',
-  'op-turn': "Opponent's turn",
-  north: 'Northern Realms faction ability triggered - North draws an additional card.',
-  monsters: 'Monsters faction ability triggered - one randomly-chosen Monster Unit Card stays on the board',
-  scoiatael: "Opponent used the Scoia'tael faction perk to go first.",
-  'skellige-me': 'Skellige Ability Triggered!',
-  'skellige-op': 'Opponent Skellige Ability Triggered!',
+  'me-coin': 'Вы ходите первым',
+  'op-coin': 'Соперник ходит первым',
+  'round-start': 'Начало раунда',
+  'me-pass': 'Вы спасовали',
+  'op-pass': 'Соперник спасовал',
+  'win-round': 'Вы выиграли раунд!',
+  'lose-round': 'Соперник выиграл раунд',
+  'draw-round': 'Ничья в раунде',
+  'me-turn': 'Ваш ход!',
+  'op-turn': 'Ход соперника',
+  north: 'Свойство фракции Королевства Севера: взят дополнительный раунд/карта.',
+  monsters: 'Свойство фракции Чудовища: одна случайная карта осталась на поле.',
+  scoiatael: "Соперник использовал свойство Скоя'таэлей ходить первым.",
+  'skellige-me': 'Свойство Скеллиге активировано!',
+  'skellige-op': 'Свойство Скеллиге соперника активировано!',
 }
 
 const NOTIFICATION_ICON: Record<string, string> = {
@@ -40,9 +40,13 @@ export function MatchNotification({ name, message }: { name: string | null; mess
   if (!name && !message) return null
 
   const iconName = name ? NOTIFICATION_ICON[name] ?? 'notif_round_start' : 'notif_round_start'
+  const isPersistent = !name
 
   return (
-    <div id="notification-bar" className="match-notification-bar">
+    <div
+      id="notification-bar"
+      className={`match-notification-bar ${isPersistent ? 'match-notification-persistent' : ''}`}
+    >
       <div
         id={name ? `notif-${name}` : undefined}
         style={{ backgroundImage: `url("${iconUrl(iconName)}")` }}

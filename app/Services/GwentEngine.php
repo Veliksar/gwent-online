@@ -1269,6 +1269,26 @@ class GwentEngine
         return $leader['abilities'][0] ?? null;
     }
 
+    /**
+     * Есть ли у лидера активируемая способность (канон: leaderAvailable =
+     * activated.length > 0; пассивные лидеры не кликабельны).
+     */
+    public static function isLeaderActivatableIndex(mixed $leaderIndex): bool
+    {
+        if (!is_numeric($leaderIndex)) {
+            return false;
+        }
+
+        $leader = GwentCardData::get((int) $leaderIndex);
+        if (!$leader || ($leader['row'] ?? null) !== 'leader') {
+            return false;
+        }
+
+        $ability = $leader['abilities'][0] ?? null;
+
+        return $ability !== null && self::isActivatedLeaderAbility($ability);
+    }
+
     private static function isActivatedLeaderAbility(string $ability): bool
     {
         return in_array($ability, [

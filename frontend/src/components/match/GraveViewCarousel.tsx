@@ -35,9 +35,14 @@ export function GraveViewCarousel({
 }) {
   const [center, setCenter] = useState(Math.max(0, grave.length - 1))
 
+  // Сбрасываем выбор только при реальном изменении содержимого кладбища:
+  // сам массив пересоздаётся при каждом обновлении матча (poll/Echo)
+  const graveKey = grave.join(',')
+
   useEffect(() => {
     setCenter(Math.max(0, grave.length - 1))
-  }, [grave])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graveKey])
 
   const currentIndex = grave[center]
   const currentCard = currentIndex !== undefined ? cardsByIndex.get(currentIndex) : undefined

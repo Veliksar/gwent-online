@@ -36,9 +36,13 @@ export function GraveCarousel({
 }) {
   const [center, setCenter] = useState(0)
 
+  // Сбрасываем выбор только при реальном изменении набора карт:
+  // сам массив пересоздаётся при каждом обновлении матча (poll/Echo)
+  const choicesKey = choices.map((choice) => `${choice.pos}:${choice.index}`).join(',')
+
   useEffect(() => {
     setCenter(0)
-  }, [choices])
+  }, [choicesKey])
 
   const current = choices[center]
   const currentCard = current ? cardsByIndex.get(current.index) : undefined

@@ -9,6 +9,10 @@ function normalizeAbilityIcon(ability: string): string {
 }
 
 function previewAbility(card: CardDefinition): string | null {
+  // Для лидерских способностей отдельных иконок нет
+  if (card.row === 'leader') {
+    return null
+  }
   const abilities = card.abilities.filter((ability) => ability !== 'hero')
   if (abilities.length > 0) {
     return normalizeAbilityIcon(abilities[abilities.length - 1])

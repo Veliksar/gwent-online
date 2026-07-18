@@ -729,6 +729,7 @@ class MatchController extends Controller
                 'leader_index' => $ps['leader_index'] ?? $player->deck_leader_id,
                 'leader_used'  => $ps['leader_used'] ?? false,
                 'leader_disabled' => $ps['leader_disabled'] ?? false,
+                'leader_activatable' => GwentEngine::isLeaderActivatableIndex($ps['leader_index'] ?? $player->deck_leader_id),
                 'health'       => $ps['health'] ?? $player->health,
                 'passed'       => $ps['passed'] ?? $player->passed,
                 'round_score'  => array_sum($rowScores),

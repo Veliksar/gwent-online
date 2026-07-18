@@ -74,7 +74,7 @@ export function MatchBoard({
   revealCards: number[]
   muliganRemaining: number
   muliganPending: boolean
-  animatingCards: Map<number, string>
+  animatingCards: Map<string, string>
   ghostCards: GhostCard[]
   opponentPlayedCard?: CardDefinition | null
   onCardClick: (handPos: number, cardIndex: number) => void
@@ -94,7 +94,11 @@ export function MatchBoard({
   const myLeaderCard = me.leader_index !== null ? cardsByIndex.get(me.leader_index) : undefined
   const opLeaderCard = opponent.leader_index !== null ? cardsByIndex.get(opponent.leader_index) : undefined
 
-  const canUseLeader = isMyTurn && !me.leader_used && !me.leader_disabled && !match.pending_medic
+  const canUseLeader = isMyTurn
+    && !me.leader_used
+    && !me.leader_disabled
+    && me.leader_activatable !== false
+    && !match.pending_medic
   const [graveViewOwner, setGraveViewOwner] = useState<'me' | 'op' | null>(null)
 
   useEffect(() => {
@@ -139,6 +143,7 @@ export function MatchBoard({
                 leaderCard={opLeaderCard}
                 leaderUsed={opponent.leader_used}
                 leaderDisabled={opponent.leader_disabled}
+                leaderActivatable={opponent.leader_activatable}
                 canUse={false}
               />
             </div>
@@ -176,6 +181,7 @@ export function MatchBoard({
                 leaderCard={myLeaderCard}
                 leaderUsed={me.leader_used}
                 leaderDisabled={me.leader_disabled}
+                leaderActivatable={me.leader_activatable}
                 canUse={canUseLeader}
                 onClick={onLeaderClick}
               />

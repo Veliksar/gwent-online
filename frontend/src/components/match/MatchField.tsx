@@ -40,7 +40,7 @@ function MatchRow({
   cardsByIndex: Map<number, CardDefinition>
   canDrop: boolean
   canSelectBoardCard: boolean
-  animatingCards: Map<number, string>
+  animatingCards: Map<string, string>
   ghostCards: GhostCard[]
   onRowClick?: () => void
   onBoardCardClick?: (row: RowKey, cardIndex: number) => void
@@ -98,7 +98,7 @@ function MatchRow({
               card={card}
               power={boardCard.power}
               weathered={weatherActive}
-              animation={animatingCards.get(boardCard.index) ?? null}
+              animation={animatingCards.get(`${ownerKey}_${boardCard.index}`) ?? null}
               onClick={selectable ? () => onBoardCardClick?.(row, boardCard.index) : undefined}
             />
           ) : (
@@ -142,7 +142,7 @@ export function MatchField({
   selectedRows: RowKey[]
   spyRow: RowKey | null
   decoySelect: boolean
-  animatingCards: Map<number, string>
+  animatingCards: Map<string, string>
   ghostCards: GhostCard[]
   onRowClick: (row: RowKey) => void
   onBoardCardClick: (row: RowKey, cardIndex: number) => void

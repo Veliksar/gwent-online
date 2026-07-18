@@ -1,16 +1,19 @@
 import type { CardDefinition } from '../../api/cards'
 import { cardSmallImageUrl } from '../../utils/cardAssets'
+import { CardPreview } from './CardPreview'
 
 export function MatchLeaderCard({
   leaderCard,
   leaderUsed,
   leaderDisabled,
+  leaderActivatable = true,
   canUse,
   onClick,
 }: {
   leaderCard?: CardDefinition
   leaderUsed: boolean
   leaderDisabled?: boolean
+  leaderActivatable?: boolean
   canUse: boolean
   onClick?: () => void
 }) {
@@ -18,7 +21,8 @@ export function MatchLeaderCard({
     ? `url('${cardSmallImageUrl(leaderCard)}')`
     : undefined
 
-  const showActiveIcon = !leaderUsed && !leaderDisabled
+  // Канон: значок активации только у лидеров с активируемой способностью
+  const showActiveIcon = !leaderUsed && !leaderDisabled && leaderActivatable
 
   return (
     <div
@@ -46,6 +50,7 @@ export function MatchLeaderCard({
           <div />
         </div>
       )}
+      {leaderCard && <CardPreview card={leaderCard} />}
     </div>
   )
 }

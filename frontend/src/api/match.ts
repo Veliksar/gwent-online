@@ -62,6 +62,7 @@ export interface MatchPlayer {
   leader_index: number | null
   leader_used: boolean
   leader_disabled: boolean
+  leader_activatable: boolean
   health: number
   passed: boolean
   round_score: number

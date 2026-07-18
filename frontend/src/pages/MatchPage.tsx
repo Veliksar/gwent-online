@@ -58,9 +58,12 @@ export default function MatchPage() {
   const [gameEnd, setGameEnd] = useState<GameEndInfo | null>(null)
   const [loading, setLoading] = useState(!match)
   const [turnSecondsLeft, setTurnSecondsLeft] = useState<number | null>(null)
+  const [localRoundEndingSeconds, setLocalRoundEndingSeconds] = useState<number | null>(null)
   const [cardsByIndex, setCardsByIndex] = useState<Map<number, CardDefinition>>(() => new Map())
   const [revealCards, setRevealCards] = useState<number[]>([])
-  const [animatingCards, setAnimatingCards] = useState<Map<number, string>>(() => new Map())
+  // Ключ - "{сторона}_{индекс карты}": одинаковые карты на обоих полях не должны
+  // подхватывать чужую анимацию (баг: рог соперника анимировал мою копию карты)
+  const [animatingCards, setAnimatingCards] = useState<Map<string, string>>(() => new Map())
   const [ghostCards, setGhostCards] = useState<GhostCard[]>([])
   const [opponentPlayedCard, setOpponentPlayedCard] = useState<CardDefinition | null>(null)
 
@@ -109,17 +112,18 @@ export default function MatchPage() {
     clearLobby()
   }, [clearMatch, clearLobby, user?.id])
 
-  const triggerCardAnimation = useCallback((cardIndex: number, animName: string, durationMs: number) => {
+  const triggerCardAnimation = useCallback((side: 'me' | 'op', cardIndex: number, animName: string, durationMs: number) => {
+    const key = `${side}_${cardIndex}`
     setAnimatingCards((prev) => {
       const next = new Map(prev)
-      next.set(cardIndex, animName)
+      next.set(key, animName)
       return next
     })
     setTimeout(() => {
       setAnimatingCards((prev) => {
-        if (prev.get(cardIndex) !== animName) return prev
+        if (prev.get(key) !== animName) return prev
         const next = new Map(prev)
-        next.delete(cardIndex)
+        next.delete(key)
         return next
       })
     }, durationMs)
@@ -340,6 +344,25 @@ export default function MatchPage() {
   }, [match?.turn_started_at, match?.turn_timeout_seconds, match?.current_player_id, syncTurn])
 
   useEffect(() => {
+    setLocalRoundEndingSeconds(match?.round_ending_seconds ?? null)
+  }, [match?.round_ending_seconds])
+
+  useEffect(() => {
+    if (localRoundEndingSeconds === null || localRoundEndingSeconds < 0) return
+
+    if (localRoundEndingSeconds === 0) {
+      syncTurn()
+      return
+    }
+
+    const timer = setInterval(() => {
+      setLocalRoundEndingSeconds((prev) => (prev !== null && prev > 0 ? prev - 1 : null))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [localRoundEndingSeconds, syncTurn])
+
+  useEffect(() => {
     if (!match) return
 
     const poll = setInterval(() => {
@@ -392,7 +415,7 @@ export default function MatchPage() {
       const newMatch = latestMatchRef.current
       if (!newMatch) return
 
-      const ownerKey = data.user_id === user?.id ? 'me' : 'op'
+      const ownerKey: 'me' | 'op' = data.user_id === user?.id ? 'me' : 'op'
       const playerData = newMatch.players.find((p) =>
         ownerKey === 'me' ? p.user_id === user?.id : p.user_id !== user?.id
       )
@@ -403,22 +426,26 @@ export default function MatchPage() {
         rowCards.forEach((bc) => {
           const c = cardsByIndexRef.current.get(bc.index)
           if (c?.abilities.includes('bond') || c?.abilities.includes('cerys')) {
-            triggerCardAnimation(bc.index, 'bond', duration)
+            triggerCardAnimation(ownerKey, bc.index, 'bond', duration)
           }
         })
       } else if ((animName === 'horn' || animName === 'morale') && playerData) {
         const rowCards = playerData.board_display[row] ?? []
-        rowCards.forEach((bc) => triggerCardAnimation(bc.index, animName, duration))
+        rowCards.forEach((bc) => triggerCardAnimation(ownerKey, bc.index, animName, duration))
       } else if (animName === 'muster' && playerData) {
         const rowCards = playerData.board_display[row] ?? []
         rowCards.forEach((bc) => {
           const c = cardsByIndexRef.current.get(bc.index)
           if (c?.abilities.includes('muster') || c?.abilities.includes('cerys')) {
-            triggerCardAnimation(bc.index, 'muster', duration)
+            triggerCardAnimation(ownerKey, bc.index, 'muster', duration)
           }
         })
       } else {
-        triggerCardAnimation(data.card_id, animName, duration)
+        // Шпион ложится на противоположную сторону от игравшего
+        const animSide: 'me' | 'op' = card.abilities.includes('spy')
+          ? (ownerKey === 'me' ? 'op' : 'me')
+          : ownerKey
+        triggerCardAnimation(animSide, data.card_id, animName, duration)
       }
     })
 
@@ -427,6 +454,7 @@ export default function MatchPage() {
         setStatusMsg('Соперник спасовал')
         showNotification('op-pass')
       } else {
+        setStatusMsg('Вы спасовали')
         showNotification('me-pass')
       }
       await syncTurn()
@@ -561,6 +589,7 @@ export default function MatchPage() {
   const passMutation = useMutation({
     mutationFn: matchApi.pass,
     onSuccess: (data) => {
+      setStatusMsg('Вы спасовали')
       showNotification('me-pass')
       applyMatchResponse(data)
     },
@@ -628,8 +657,8 @@ export default function MatchPage() {
   const opponent = match.players.find((p) => p.user_id !== user?.id)
   const isMyTurn = match.current_player_id === user?.id
 
-  const roundEndingMsg = match.round_ending_seconds != null
-    ? `Оба игрока спасовали - раунд завершается через ${match.round_ending_seconds} сек`
+  const roundEndingMsg = localRoundEndingSeconds !== null
+    ? `Оба игрока спасовали - раунд завершается через ${localRoundEndingSeconds} сек`
     : ''
 
   const selectedCard = fsm.mode === 'card_selected' || fsm.mode === 'decoy_select' ? fsm.cardIndex : null
@@ -690,7 +719,7 @@ export default function MatchPage() {
       selectedRows={selectedRows}
       spyRow={spyRow}
       decoySelect={fsm.mode === 'decoy_select'}
-      statusMsg={statusMsg || roundEndingMsg}
+      statusMsg={roundEndingMsg || statusMsg}
       notificationName={notificationName}
       turnSecondsLeft={turnSecondsLeft}
       passPending={passMutation.isPending}

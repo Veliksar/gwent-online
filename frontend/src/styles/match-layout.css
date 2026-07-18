@@ -201,6 +201,12 @@
   overflow: hidden;
 }
 
+.match-panel-left:hover,
+.match-panel-mid:hover,
+.match-panel-right:hover {
+  z-index: 100;
+}
+
 /* ========================================================
    LEFT PANEL - legacy coordinates (all % relative to panel height)
    Legacy: height = calc(100vw * 1080/1920) = 56.25vw
@@ -521,18 +527,23 @@
 }
 
 .match-passed {
-  height: 0;
-  width: 0;
-  left: 90%;
-  top: 87%;
-  color: tan;
-  font-size: 1.5vw;
-  font-weight: 700;
-  text-shadow: 1px 1px 2px #000;
+  position: absolute;
+  left: 5%;
+  top: 9.6%;
+  width: 21.9%;
+  height: 80%;
+  background-image: url('/img/icons/notif_round_passed.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(10, 10, 10, 0.6);
+  z-index: 10;
+  color: transparent;
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 .match-passed-me {
-  top: -3%;
 }
 
 /* --- Weather section - now handled by .match-weather-area (absolute) --- */
@@ -965,7 +976,7 @@
   font-size: 1.1vw;
   font-weight: 700;
   line-height: 1;
-  z-index: 1000;
+  z-index: 10;
   box-sizing: border-box;
   text-shadow: 0 0 0.2vw rgba(0, 0, 0, 0.8);
 }

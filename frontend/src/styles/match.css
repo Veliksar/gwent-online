@@ -78,6 +78,10 @@
   text-shadow: 0 0 0.1vw black;
 }
 
+.match-grave-pile-card .card > div:nth-child(1) > div {
+  top: 16%;
+}
+
 .card > div:nth-child(2) {
   top: 75%;
   left: 65%;
@@ -143,19 +147,20 @@
 .card-preview {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 150;
   display: none;
   pointer-events: none;
 }
 
-.gwent-card-wrap:hover .card-preview {
+.gwent-card-wrap:hover .card-preview,
+.match-leader-box:hover .card-preview {
   display: block;
 }
 
 /* Превью карты, разыгранной соперником (канон: ui.showPreviewVisuals ~1s) */
 .match-op-play-preview .card-preview {
   display: block;
-  z-index: 85;
+  z-index: 155;
 }
 
 /* Позиция превью как в legacy card-preview.css (правый край доски) */
@@ -278,6 +283,12 @@
 }
 
 .gwent-card-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 40% auto;
@@ -392,6 +403,11 @@
   background-color: rgba(10, 10, 10, 0.95);
   z-index: 100;
   animation: match-notification-fade 1.2s ease-in-out both;
+}
+
+#notification-bar.match-notification-bar.match-notification-persistent {
+  animation: none !important;
+  opacity: 1 !important;
 }
 
 #notification-bar.match-notification-bar > div {
