@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Georgia', serif;
+  background-color: #0f0f1a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.btn-gold {
+  background: linear-gradient(to bottom, #c9a227, #8b6914);
+  color: #0f0f1a;
+  font-weight: bold;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(to bottom, #facc15, #c9a227);
+}
+
+.btn-gold:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #2d2d44;
+  border: 1px solid #4a4a6a;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background-color: #4a4a6a;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-field {
+  width: 100%;
+  background-color: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #c9a227;
+}
+
+.panel {
+  background-color: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.text-gwent-gold {
+  color: #c9a227;
+}
+
+.bg-gwent-dark {
+  background-color: #1a1a2e;
+}
+
+.bg-gwent-darker {
+  background-color: #0f0f1a;
+}
+
+.border-gwent-border {
+  border-color: #4a4a6a;
+}

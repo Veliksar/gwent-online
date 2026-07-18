@@ -1,0 +1,48 @@
+# Laravel
+/vendor
+/node_modules
+/.env
+/.env.backup
+/.env.production
+/storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+!storage/logs/.gitignore
+
+# Frontend
+/frontend/node_modules
+/frontend/dist
+/frontend/.env
+/frontend/.env.*
+!/frontend/.env.example
+/public/build
+*.tsbuildinfo
+
+# IDE
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+/coverage
+/.phpunit.result.cache
+
+# Documentation and local server configs (per user request)
+/README.md
+/docs/
+/.osp/

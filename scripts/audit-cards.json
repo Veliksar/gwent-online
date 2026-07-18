@@ -1,0 +1,745 @@
+﻿{
+  "phpParsed": 8,
+  "indexMismatchCount": 7,
+  "indexMismatchSample": [
+    {
+      "idx": 16,
+      "canon": {
+        "name": "Zoltan Chivay",
+        "filename": "zoltan",
+        "ability": ""
+      },
+      "php": {
+        "name": "Emhyr - Imperial",
+        "deck": "nilfgaard",
+        "filename": "emhyr_silver",
+        "abilities": [
+          "emhyr_imperial"
+        ]
+      }
+    },
+    {
+      "idx": 20,
+      "canon": {
+        "name": "Cow",
+        "filename": "cow",
+        "ability": "avenger"
+      },
+      "php": {
+        "name": "Foltest - King",
+        "deck": "realms",
+        "filename": "foltest_silver",
+        "abilities": [
+          "foltest_king"
+        ]
+      }
+    },
+    {
+      "idx": 24,
+      "canon": {
+        "name": "Foltest - The Siegemaster",
+        "filename": "foltest_copper",
+        "ability": "foltest_siegemaster"
+      },
+      "php": {
+        "name": "Ballista",
+        "deck": "realms",
+        "filename": "ballista",
+        "abilities": []
+      }
+    },
+    {
+      "idx": 53,
+      "canon": {
+        "name": "Yarpen Zigrin",
+        "filename": "yarpen",
+        "ability": ""
+      },
+      "php": {
+        "name": "Albrich",
+        "deck": "nilfgaard",
+        "filename": "albrich",
+        "abilities": []
+      }
+    },
+    {
+      "idx": 83,
+      "canon": {
+        "name": "Siege Technician",
+        "filename": "siege_support",
+        "ability": "medic"
+      },
+      "php": {
+        "name": "Eredin - Commander",
+        "deck": "monsters",
+        "filename": "eredin_silver",
+        "abilities": [
+          "eredin_commander"
+        ]
+      }
+    },
+    {
+      "idx": 87,
+      "canon": {
+        "name": "Vanhemar",
+        "filename": "vanhemar",
+        "ability": ""
+      },
+      "php": {
+        "name": "Arachas",
+        "deck": "monsters",
+        "filename": "arachas",
+        "abilities": [
+          "muster"
+        ]
+      }
+    },
+    {
+      "idx": 116,
+      "canon": {
+        "name": "Gargoyle",
+        "filename": "gargoyle",
+        "ability": ""
+      },
+      "php": {
+        "name": "Francesca - Queen",
+        "deck": "scoiatael",
+        "filename": "francesca_silver",
+        "abilities": [
+          "francesca_queen"
+        ]
+      }
+    }
+  ],
+  "inCanonFirst144NotInPhp": [
+    "decoy",
+    "frost",
+    "ciri",
+    "clear",
+    "horn",
+    "dandelion",
+    "emiel",
+    "geralt",
+    "fog",
+    "scorch",
+    "rain",
+    "triss",
+    "vesemir",
+    "villen",
+    "yennefer",
+    "zoltan",
+    "olgierd",
+    "gaunter_odimm",
+    "gaunter_odimm_darkness",
+    "cow",
+    "chort",
+    "foltest_gold",
+    "foltest_copper",
+    "foltest_bronze",
+    "foltest_son_of_medell",
+    "blue_stripes",
+    "catapult_1",
+    "crinfrid",
+    "dethmold",
+    "banner_nurse",
+    "esterad",
+    "natalis",
+    "kaedwen_siege",
+    "kaedwen_siege_1",
+    "kaedwen_siege_2",
+    "keira",
+    "philippa",
+    "poor_infantry",
+    "stennis",
+    "redania",
+    "redania_1",
+    "sheldon",
+    "siege_tower",
+    "siegfried",
+    "dijkstra",
+    "sheala",
+    "thaler",
+    "sabrina",
+    "vernon",
+    "ves",
+    "yarpen",
+    "trebuchet",
+    "trebuchet_1",
+    "emhyr_copper",
+    "emhyr_bronze",
+    "emhyr_gold",
+    "emhyr_invader_of_the_north",
+    "assire",
+    "black_archer",
+    "black_archer_1",
+    "cahir",
+    "cynthia",
+    "archer_support",
+    "archer_support_1",
+    "fringilla",
+    "heavy_zerri",
+    "imperal_brigade",
+    "letho",
+    "menno",
+    "morteisen",
+    "moorvran",
+    "nauzicaa_2",
+    "puttkammer",
+    "rainfarn",
+    "renuald",
+    "rotten",
+    "shilard",
+    "siege_engineer",
+    "siege_support",
+    "stefan",
+    "sweers",
+    "tibor",
+    "vanhemar",
+    "vattier",
+    "vreemde",
+    "young_emissary",
+    "young_emissary_1",
+    "zerri",
+    "eredin_bronze",
+    "eredin_gold",
+    "eredin_copper",
+    "eredin_the_treacherous",
+    "arachas_1",
+    "arachas_2",
+    "arachas_behemoth",
+    "poroniec",
+    "celaeno_harpy",
+    "cockatrice",
+    "witch_velen",
+    "witch_velen_1",
+    "witch_velen_2",
+    "draug",
+    "earth_elemental",
+    "endrega",
+    "fiend",
+    "fire_elemental",
+    "fogling",
+    "forktail",
+    "frightener",
+    "gargoyle",
+    "ghoul",
+    "ghoul_1",
+    "ghoul_2",
+    "gravehag",
+    "gryffin",
+    "harpy",
+    "frost_giant",
+    "imlerith",
+    "kayran",
+    "leshen",
+    "nekker",
+    "nekker_1",
+    "nekker_2",
+    "mighty_maiden",
+    "bruxa",
+    "ekkima",
+    "fleder",
+    "garkain",
+    "katakan",
+    "werewolf",
+    "wyvern",
+    "toad",
+    "francesca_gold",
+    "francesca_copper",
+    "francesca_bronze",
+    "francesca_hope_of_the_aen_seidhe"
+  ],
+  "inPhpNotInCanonFirst144": [],
+  "missingCanon144Plus": [
+    {
+      "idx": 144,
+      "name": "Ciaran aep Easnillien",
+      "deck": "scoiatael",
+      "filename": "ciaran",
+      "ability": ""
+    },
+    {
+      "idx": 145,
+      "name": "Barclay Els",
+      "deck": "scoiatael",
+      "filename": "barclay",
+      "ability": ""
+    },
+    {
+      "idx": 146,
+      "name": "Dennis Cranmer",
+      "deck": "scoiatael",
+      "filename": "dennis",
+      "ability": ""
+    },
+    {
+      "idx": 147,
+      "name": "Dol Blathanna Archer",
+      "deck": "scoiatael",
+      "filename": "dol_archer",
+      "ability": ""
+    },
+    {
+      "idx": 148,
+      "name": "Dol Blathanna Scout",
+      "deck": "scoiatael",
+      "filename": "dol_infantry",
+      "ability": ""
+    },
+    {
+      "idx": 149,
+      "name": "Dol Blathanna Scout",
+      "deck": "scoiatael",
+      "filename": "dol_infantry_1",
+      "ability": ""
+    },
+    {
+      "idx": 150,
+      "name": "Dol Blathanna Scout",
+      "deck": "scoiatael",
+      "filename": "dol_infantry_2",
+      "ability": ""
+    },
+    {
+      "idx": 151,
+      "name": "Dwarven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "dwarf",
+      "ability": "muster"
+    },
+    {
+      "idx": 152,
+      "name": "Dwarven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "dwarf_1",
+      "ability": "muster"
+    },
+    {
+      "idx": 153,
+      "name": "Dwarven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "dwarf_2",
+      "ability": "muster"
+    },
+    {
+      "idx": 154,
+      "name": "Eithn├⌐",
+      "deck": "scoiatael",
+      "filename": "eithne",
+      "ability": "hero"
+    },
+    {
+      "idx": 155,
+      "name": "Elven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "elf_skirmisher",
+      "ability": "muster"
+    },
+    {
+      "idx": 156,
+      "name": "Elven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "elf_skirmisher_1",
+      "ability": "muster"
+    },
+    {
+      "idx": 157,
+      "name": "Elven Skirmisher",
+      "deck": "scoiatael",
+      "filename": "elf_skirmisher_2",
+      "ability": "muster"
+    },
+    {
+      "idx": 158,
+      "name": "Filavandrel aen Fidhail",
+      "deck": "scoiatael",
+      "filename": "filavandrel",
+      "ability": ""
+    },
+    {
+      "idx": 159,
+      "name": "Havekar Healer",
+      "deck": "scoiatael",
+      "filename": "havekar_nurse",
+      "ability": "medic"
+    },
+    {
+      "idx": 160,
+      "name": "Havekar Healer",
+      "deck": "scoiatael",
+      "filename": "havekar_nurse_1",
+      "ability": "medic"
+    },
+    {
+      "idx": 161,
+      "name": "Havekar Healer",
+      "deck": "scoiatael",
+      "filename": "havekar_nurse_2",
+      "ability": "medic"
+    },
+    {
+      "idx": 162,
+      "name": "Havekar Smuggler",
+      "deck": "scoiatael",
+      "filename": "havekar_support",
+      "ability": "muster"
+    },
+    {
+      "idx": 163,
+      "name": "Havekar Smuggler",
+      "deck": "scoiatael",
+      "filename": "havekar_support_1",
+      "ability": "muster"
+    },
+    {
+      "idx": 164,
+      "name": "Havekar Smuggler",
+      "deck": "scoiatael",
+      "filename": "havekar_support_2",
+      "ability": "muster"
+    },
+    {
+      "idx": 165,
+      "name": "Ida Emean aep Sivney",
+      "deck": "scoiatael",
+      "filename": "ida",
+      "ability": ""
+    },
+    {
+      "idx": 166,
+      "name": "Iorveth",
+      "deck": "scoiatael",
+      "filename": "iorveth",
+      "ability": "hero"
+    },
+    {
+      "idx": 167,
+      "name": "Isengrim Faoiltiarna",
+      "deck": "scoiatael",
+      "filename": "isengrim",
+      "ability": "hero morale"
+    },
+    {
+      "idx": 168,
+      "name": "Mahakaman Defender",
+      "deck": "scoiatael",
+      "filename": "mahakam",
+      "ability": ""
+    },
+    {
+      "idx": 169,
+      "name": "Mahakaman Defender",
+      "deck": "scoiatael",
+      "filename": "mahakam_1",
+      "ability": ""
+    },
+    {
+      "idx": 170,
+      "name": "Mahakaman Defender",
+      "deck": "scoiatael",
+      "filename": "mahakam_2",
+      "ability": ""
+    },
+    {
+      "idx": 171,
+      "name": "Mahakaman Defender",
+      "deck": "scoiatael",
+      "filename": "mahakam_3",
+      "ability": ""
+    },
+    {
+      "idx": 172,
+      "name": "Mahakaman Defender",
+      "deck": "scoiatael",
+      "filename": "mahakam_4",
+      "ability": ""
+    },
+    {
+      "idx": 173,
+      "name": "Milva",
+      "deck": "scoiatael",
+      "filename": "milva",
+      "ability": "morale"
+    },
+    {
+      "idx": 174,
+      "name": "Riordain",
+      "deck": "scoiatael",
+      "filename": "riordain",
+      "ability": ""
+    },
+    {
+      "idx": 175,
+      "name": "Saesenthessis",
+      "deck": "scoiatael",
+      "filename": "saskia",
+      "ability": "hero"
+    },
+    {
+      "idx": 176,
+      "name": "Toruviel",
+      "deck": "scoiatael",
+      "filename": "toruviel",
+      "ability": ""
+    },
+    {
+      "idx": 177,
+      "name": "Vrihedd Brigade Recruit",
+      "deck": "scoiatael",
+      "filename": "vrihedd_cadet",
+      "ability": ""
+    },
+    {
+      "idx": 178,
+      "name": "Vrihedd Brigade Veteran",
+      "deck": "scoiatael",
+      "filename": "vrihedd_brigade",
+      "ability": ""
+    },
+    {
+      "idx": 179,
+      "name": "Vrihedd Brigade Veteran",
+      "deck": "scoiatael",
+      "filename": "vrihedd_brigade_1",
+      "ability": ""
+    },
+    {
+      "idx": 180,
+      "name": "Yaevinn",
+      "deck": "scoiatael",
+      "filename": "yaevinn",
+      "ability": ""
+    },
+    {
+      "idx": 181,
+      "name": "Berserker",
+      "deck": "skellige",
+      "filename": "berserker",
+      "ability": "berserker"
+    },
+    {
+      "idx": 182,
+      "name": "Birna Bran",
+      "deck": "skellige",
+      "filename": "birna",
+      "ability": "medic"
+    },
+    {
+      "idx": 183,
+      "name": "Blueboy Lugos",
+      "deck": "skellige",
+      "filename": "blueboy",
+      "ability": ""
+    },
+    {
+      "idx": 184,
+      "name": "Cerys",
+      "deck": "skellige",
+      "filename": "cerys",
+      "ability": "hero muster"
+    },
+    {
+      "idx": 185,
+      "name": "Clan Brokva Archer",
+      "deck": "skellige",
+      "filename": "brokva_archer",
+      "ability": ""
+    },
+    {
+      "idx": 186,
+      "name": "Clan Dimun Pirate",
+      "deck": "skellige",
+      "filename": "dimun_pirate",
+      "ability": "scorch"
+    },
+    {
+      "idx": 187,
+      "name": "Cerys - Clan Drummond Shield Maiden",
+      "deck": "skellige",
+      "filename": "shield_maiden",
+      "ability": "bond"
+    },
+    {
+      "idx": 188,
+      "name": "Cerys - Clan Drummond Shield Maiden",
+      "deck": "skellige",
+      "filename": "shield_maiden_1",
+      "ability": "bond"
+    },
+    {
+      "idx": 189,
+      "name": "Cerys - Clan Drummond Shield Maiden",
+      "deck": "skellige",
+      "filename": "shield_maiden_2",
+      "ability": "bond"
+    },
+    {
+      "idx": 190,
+      "name": "Clan Heymaey Skald",
+      "deck": "skellige",
+      "filename": "heymaey",
+      "ability": ""
+    },
+    {
+      "idx": 191,
+      "name": "Clan Tordarroch Armorsmith",
+      "deck": "skellige",
+      "filename": "tordarroch",
+      "ability": ""
+    },
+    {
+      "idx": 192,
+      "name": "Clan an Craite Warrior",
+      "deck": "skellige",
+      "filename": "craite_warrior",
+      "ability": "bond"
+    },
+    {
+      "idx": 193,
+      "name": "Donar an Hindar",
+      "deck": "skellige",
+      "filename": "donar",
+      "ability": ""
+    },
+    {
+      "idx": 194,
+      "name": "Draig Bon-Dhu",
+      "deck": "skellige",
+      "filename": "draig",
+      "ability": "horn"
+    },
+    {
+      "idx": 195,
+      "name": "Ermion",
+      "deck": "skellige",
+      "filename": "ermion",
+      "ability": "hero mardroeme"
+    },
+    {
+      "idx": 196,
+      "name": "Hemdall",
+      "deck": "skellige",
+      "filename": "hemdall",
+      "ability": "hero"
+    },
+    {
+      "idx": 197,
+      "name": "Hjalmar",
+      "deck": "skellige",
+      "filename": "hjalmar",
+      "ability": "hero"
+    },
+    {
+      "idx": 198,
+      "name": "Holger Blackhand",
+      "deck": "skellige",
+      "filename": "holger",
+      "ability": ""
+    },
+    {
+      "idx": 199,
+      "name": "Kambi",
+      "deck": "skellige",
+      "filename": "kambi",
+      "ability": "avenger_kambi"
+    },
+    {
+      "idx": 200,
+      "name": "Light Longship",
+      "deck": "skellige",
+      "filename": "light_longship",
+      "ability": "muster"
+    },
+    {
+      "idx": 201,
+      "name": "Madman Lugos",
+      "deck": "skellige",
+      "filename": "madmad_lugos",
+      "ability": ""
+    },
+    {
+      "idx": 202,
+      "name": "Mardroeme",
+      "deck": "special",
+      "filename": "mardroeme",
+      "ability": "mardroeme"
+    },
+    {
+      "idx": 203,
+      "name": "Olaf",
+      "deck": "skellige",
+      "filename": "olaf",
+      "ability": "morale"
+    },
+    {
+      "idx": 204,
+      "name": "Skellige Storm",
+      "deck": "weather",
+      "filename": "storm",
+      "ability": "rain fog"
+    },
+    {
+      "idx": 205,
+      "name": "Svanrige",
+      "deck": "skellige",
+      "filename": "svanrige",
+      "ability": ""
+    },
+    {
+      "idx": 206,
+      "name": "Transformed Vildkaarl",
+      "deck": "skellige",
+      "filename": "vildkaarl",
+      "ability": "morale"
+    },
+    {
+      "idx": 207,
+      "name": "Transformed Young Vildkaarl",
+      "deck": "skellige",
+      "filename": "young_vildkaarl",
+      "ability": "bond"
+    },
+    {
+      "idx": 208,
+      "name": "Udalryk",
+      "deck": "skellige",
+      "filename": "udalryk",
+      "ability": ""
+    },
+    {
+      "idx": 209,
+      "name": "War Longship",
+      "deck": "skellige",
+      "filename": "war_longship",
+      "ability": "bond"
+    },
+    {
+      "idx": 210,
+      "name": "Young Berserker",
+      "deck": "skellige",
+      "filename": "young_berserker",
+      "ability": "berserker"
+    },
+    {
+      "idx": 211,
+      "name": "Crach an Craite",
+      "deck": "skellige",
+      "filename": "crach_an_craite",
+      "ability": "crach_an_craite"
+    },
+    {
+      "idx": 212,
+      "name": "King Bran",
+      "deck": "skellige",
+      "filename": "king_bran",
+      "ability": "king_bran"
+    },
+    {
+      "idx": 213,
+      "name": "Schirru",
+      "deck": "scoiatael",
+      "filename": "schirru",
+      "ability": "scorch_s"
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+﻿{
+  "summary": {
+    "canonCardCount": 214,
+    "phpCardCount": 144,
+    "missingInPhpCount": 70,
+    "mismatchedCount": 0,
+    "alignedCount": 144,
+    "skelligeIndicesCount": 32,
+    "abilityDictCount": 44
+  },
+  "missingInPhp": [
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213
+  ],
+  "mismatchedCards": [],
+  "mismatchedAllCount": 0,
+  "firstAlignedBreak": null,
+  "abilityTable": [
+    {
+      "key": "clear",
+      "engine": "ok"
+    },
+    {
+      "key": "frost",
+      "engine": "ok"
+    },
+    {
+      "key": "fog",
+      "engine": "ok"
+    },
+    {
+      "key": "rain",
+      "engine": "ok"
+    },
+    {
+      "key": "storm",
+      "engine": "missing"
+    },
+    {
+      "key": "hero",
+      "engine": "partial"
+    },
+    {
+      "key": "decoy",
+      "engine": "partial"
+    },
+    {
+      "key": "horn",
+      "engine": "partial"
+    },
+    {
+      "key": "mardroeme",
+      "engine": "missing"
+    },
+    {
+      "key": "berserker",
+      "engine": "missing"
+    },
+    {
+      "key": "scorch",
+      "engine": "partial"
+    },
+    {
+      "key": "scorch_c",
+      "engine": "partial"
+    },
+    {
+      "key": "scorch_r",
+      "engine": "partial"
+    },
+    {
+      "key": "scorch_s",
+      "engine": "partial"
+    },
+    {
+      "key": "agile",
+      "engine": "ok"
+    },
+    {
+      "key": "muster",
+      "engine": "ok"
+    },
+    {
+      "key": "spy",
+      "engine": "ok"
+    },
+    {
+      "key": "medic",
+      "engine": "ok"
+    },
+    {
+      "key": "morale",
+      "engine": "ok"
+    },
+    {
+      "key": "bond",
+      "engine": "ok"
+    },
+    {
+      "key": "avenger",
+      "engine": "missing"
+    },
+    {
+      "key": "avenger_kambi",
+      "engine": "missing"
+    },
+    {
+      "key": "foltest_king",
+      "engine": "missing"
+    },
+    {
+      "key": "foltest_lord",
+      "engine": "missing"
+    },
+    {
+      "key": "foltest_siegemaster",
+      "engine": "missing"
+    },
+    {
+      "key": "foltest_steelforged",
+      "engine": "missing"
+    },
+    {
+      "key": "foltest_son",
+      "engine": "missing"
+    },
+    {
+      "key": "emhyr_imperial",
+      "engine": "missing"
+    },
+    {
+      "key": "emhyr_emperor",
+      "engine": "missing"
+    },
+    {
+      "key": "emhyr_whiteflame",
+      "engine": "missing"
+    },
+    {
+      "key": "emhyr_relentless",
+      "engine": "missing"
+    },
+    {
+      "key": "emhyr_invader",
+      "engine": "missing"
+    },
+    {
+      "key": "eredin_commander",
+      "engine": "missing"
+    },
+    {
+      "key": "eredin_bringer_of_death",
+      "engine": "missing"
+    },
+    {
+      "key": "eredin_destroyer",
+      "engine": "missing"
+    },
+    {
+      "key": "eredin_king",
+      "engine": "missing"
+    },
+    {
+      "key": "eredin_treacherous",
+      "engine": "missing"
+    },
+    {
+      "key": "francesca_queen",
+      "engine": "missing"
+    },
+    {
+      "key": "francesca_beautiful",
+      "engine": "missing"
+    },
+    {
+      "key": "francesca_daisy",
+      "engine": "missing"
+    },
+    {
+      "key": "francesca_pureblood",
+      "engine": "missing"
+    },
+    {
+      "key": "francesca_hope",
+      "engine": "missing"
+    },
+    {
+      "key": "crach_an_craite",
+      "engine": "missing"
+    },
+    {
+      "key": "king_bran",
+      "engine": "missing"
+    }
+  ]
+}

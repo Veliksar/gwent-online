@@ -1,0 +1,78 @@
+* {
+   box-sizing:border-box;
+   cursor: url('../img/icons/cursor.png'), auto;
+}
+
+html,body
+{
+	/* eliminate whitespace */
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: visible;
+	scrollbar-width: none; /* disable srcrollbar for firefox */
+}
+
+/* remove spacing between html elements */
+body {
+	font-size: 0px;
+	/*font-family: Impact;*/
+	font-family:Arial Narrow, sans-serif;
+	color: goldenrod;
+	background-color: black;
+}
+
+/* disables scroll bar b/c it messes with % units like margins */
+body::-webkit-scrollbar {
+	display: none;
+}
+
+main {
+	position:absolute;
+	width: 100%;
+	height: calc(100vw * 1080 / 1920);
+	background-image: url('../img/board.jpg');
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+}
+
+/* makes text seleciton and highlighting invisible */
+::selection { background: transparent; }		/* WebKit/Blink Browsers */
+::-moz-selection { background: transparent; }	/* Gecko Browsers */
+
+::-webkit-scrollbar {
+  width: 1.5vw;
+}
+::-webkit-scrollbar-thumb {
+  background: #5559;
+  border-radius: .5vw;
+  height: 3vw;
+  border: .35vw double black;
+}
+::-webkit-scrollbar-track {
+  background: #131313;
+}
+
+html {
+	scrollbar-color: #5559 #131313; /* mozilla */
+}
+
+#click-background {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}
+
+#hand-op {
+	position:absolute;
+	height: 6.35vw;
+	width: 4.45vw;
+	top:-7vw;
+	left: 33vw;
+	
+	border: 1px solid blue;
+}
+
+#hand-op .card { position : absolute; }

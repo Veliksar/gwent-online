@@ -1,0 +1,72 @@
+.cardpile {
+	width: 27.6%;
+	height: 13.5%;
+	margin-bottom: -36.25%;
+	
+	display:flex;
+	flex-direction:column-reverse;
+	align-items: center;
+	overflow: visible;
+	z-index: 1;
+}
+
+.cardpile .card {
+	pointer-events: none;
+}
+
+#grave-op {
+	top: 6.5%;
+	left: 6.5%;
+}
+
+#deck-op {
+	top: 6.5%;
+	left: 51%
+}
+
+#grave-me {
+	top: 76.5%;
+	left: 6.5%;
+}
+
+#deck-me {
+	top: 76.5%;
+	left: 51%
+}
+
+.deck-card {
+	position: relative;
+	display: inline-block;
+	
+	height: 6.675vw;
+	width: 4.45vw;
+
+	background-size:contain;
+	background-repeat: no-repeat;
+	box-shadow: -.1vw -.1vw .5vw rgba(20,20,20, 0.5);
+}
+
+.deck-counter {
+	position: relative;
+	background-color: rgba(20,20,20, 0.8);
+	
+	width: 3vw;
+	height: 2vw;
+	
+	z-index: 1;
+	
+	color:tan;
+	font-size: 1.3vw;
+}
+
+.cardpile .deck-card {
+	top: -5%;
+	margin-top: -114.5%;
+}
+
+
+.cardpile > .card {
+	/* position: relative; */
+	top: -5%;
+	margin-top: -108.5%;
+}

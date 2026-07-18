@@ -1,0 +1,63 @@
+#popup {
+	position: absolute;
+    width: 100%;
+    height: calc(100vw * 1080 / 1920);
+    background-color: rgba(10,10,10,.95);
+    z-index: 1000;
+    /* background-image: url(../img/boardtest10.png); */
+    /* background-size: contain; */
+}
+
+
+#popup > div {
+    margin-top: -89px;
+    width: 26.5%;
+    border: .2vw ridge rgb(40,40,40);
+    padding: 0 0.5vw;
+    background-color: rgb(20,20,20);
+}
+
+#popup h3 {
+    display: block;
+    font-size: 1.05vw;
+    text-transform: uppercase;
+    color: grey;
+    text-align: center;
+    line-height: 100%;
+}
+
+#popup p {
+    text-align: center;
+    font-size: 1.23vw;
+    padding-top: .6vw;
+    color: tan;
+}
+
+#popup > div > div {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .2vw;
+    min-width: 10%;
+    width: fit-content;
+    margin: -1.4vw auto 0;
+    border: .2vw ridge rgb(25,25,25);
+    background-color: black;
+    top: 1.3vw;
+}
+
+#popup button {
+    display: inline-block;
+    width: auto;
+    height: 1.8vw;
+    border: .2vw ridge rgb(20,20,20);
+    background-color: rgb(20,20,20);
+    font-size: 1vw;
+    text-shadow: 1vw 1vw 1vw black;
+	text-transform: capitalize;
+	margin: 0 0.3vw;
+}
+
+#popup button:first-child { color: green; }
+#popup button:last-child {color: darkred; }

@@ -1,0 +1,1301 @@
+/* ========================================================
+   GWENT MATCH BOARD LAYOUT - canonical proportions
+   Left 26.5% | Mid 52.5% | Right 21%
+   Aspect ratio 1920:1080, board.jpg background
+   ======================================================== */
+
+/* Outer shell - fills viewport, centers board */
+.match-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+}
+
+/* ---- 16:9 board with wood background ---- */
+.match-board {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(100vw, calc(100vh * 1920 / 1080));
+  height: min(100vh, calc(100vw * 1080 / 1920));
+  background-image: url('/img/board.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  color: goldenrod;
+  font-size: clamp(0.48rem, 0.85vw, 0.92rem);
+  overflow: hidden;
+}
+
+/* ---- Header (левый край экрана, колонка) ---- */
+.match-header {
+  position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-66%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35vw;
+    padding: 20px 5px;
+    width: auto;
+    max-width: 11vw;
+    background: rgba(10, 9, 12, 0.5);
+    border: 1px dashed rgba(111, 84, 32, 0.4);
+    border-left: none;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.match-header > * {
+  pointer-events: auto;
+}
+
+.match-header h1 {
+  margin: 0;
+  font-size: 1.1vw;
+  color: #c9a227;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+
+.match-turn,
+.match-timer,
+.match-leave-button,
+.match-pass-button {
+  border: 1px solid #6f5420;
+  border-radius: 0.2vw;
+  background: rgba(20, 17, 18, 0.86);
+  color: #ead8a8;
+  padding: 0.15vw 0.5vw;
+  font-size: 0.8vw;
+  font-family: inherit;
+}
+
+.match-turn {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.match-turn-me {
+  background: linear-gradient(to bottom, #c9a227, #7c5714);
+  color: #110f10;
+  font-weight: 700;
+}
+
+.match-timer {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, monospace;
+}
+
+.match-timer-urgent {
+  color: #ff7878;
+  border-color: #9b3333;
+}
+
+.match-leave-button {
+  position: fixed;
+  top: 0.5vw;
+  right: 0.5vw;
+  z-index: 31;
+  cursor: pointer;
+}
+
+.match-leave-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Notification bar (канон: overlay поверх доски) ---- */
+.match-notification,
+.match-notification-bar {
+  position: absolute;
+  width: 100%;
+  height: 14%;
+  top: 43%;
+  left: 0;
+  padding: 0;
+  background-color: rgba(10, 10, 10, 0.95);
+  border: none;
+  color: #f8df89;
+  font-size: 0.78vw;
+  text-align: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.match-board #notification-bar.match-notification-bar,
+.match-board .match-notification-bar {
+  position: absolute;
+  width: 100%;
+  height: 14%;
+  top: 43%;
+  left: 0;
+  background-color: rgba(10, 10, 10, 0.95);
+  z-index: 100;
+}
+
+.match-notification-bar > div {
+  position: absolute;
+  width: 22.1%;
+  height: 207.25%;
+  top: -66.6%;
+  left: 22.55%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.match-notification-bar > div span {
+  position: absolute;
+  left: 100.5%;
+  top: 32.1%;
+  width: 205%;
+  height: 47.25%;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  font-size: 1.6vw;
+  font-weight: 700;
+  color: goldenrod;
+}
+
+/* ---- Three-panel area (полная высота доски, как legacy .panel) ---- */
+.match-panels {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+/* ---- LEFT PANEL (26.5%) - position:relative, children absolute like legacy ---- */
+.match-panel-left {
+  flex: 0 0 26.5%;
+  width: 26.5%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- MID PANEL (52.5%) ---- */
+.match-panel-mid {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- RIGHT PANEL (21%) - position:relative, children absolute like legacy ---- */
+.match-panel-right {
+  flex: 0 0 21%;
+  width: 21%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========================================================
+   LEFT PANEL - legacy coordinates (all % relative to panel height)
+   Legacy: height = calc(100vw * 1080/1920) = 56.25vw
+   ======================================================== */
+
+/* Leader cards - matches .leader-box */
+.match-leader-area-op,
+.match-leader-area-me {
+  position: absolute;
+  left: 27.5%;
+  width: 31.4%;
+  height: 12.5%;
+}
+
+.match-leader-area-op { top: 7.55%; }
+.match-leader-area-me { top: 77.5%; }
+
+/* Stats sections - matches .stats */
+.match-stats-area-op,
+.match-stats-area-me {
+  position: absolute;
+  left: 0;
+  width: 88.5%;
+  height: 12.5%;
+  background-color: rgba(20, 20, 20, 0.4);
+}
+
+.match-stats-area-op { top: 24.25%; }
+.match-stats-area-me { top: 61.75%; }
+
+/* Weather area - matches #weather */
+.match-weather-area {
+  position: absolute;
+  top: 41.25%;
+  left: 27.9%;
+  width: 54.9%;
+  height: 12.75%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  z-index: 1;
+}
+
+/* ========================================================
+   RIGHT PANEL - legacy coordinates
+   ======================================================== */
+
+/* Card piles - matches .cardpile */
+.match-grave-op,
+.match-deck-op,
+.match-grave-me,
+.match-deck-me {
+  position: absolute;
+  width: 27.6%;
+  height: 13.5%;
+}
+
+.match-grave-op { top: 6.5%;  left: 6.5%; }
+.match-deck-op  { top: 6.5%;  left: 51%; }
+.match-grave-me { top: 76.5%; left: 6.5%; }
+.match-deck-me  { top: 76.5%; left: 51%; }
+
+/* Leader card - legacy .leader-box structure */
+.match-leader-box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: default;
+}
+
+.match-leader-container {
+  position: relative;
+  height: 100%;
+  width: 63%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-leader-card {
+  position: absolute;
+  height: 98%;
+  width: 95%;
+  border-radius: 0.6vw;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+}
+
+.match-leader-box-available {
+  cursor: pointer;
+}
+
+.match-leader-box-available .match-leader-card {
+  outline: 0.1vw solid #c9a227;
+  box-shadow: 0 0 0.8vw rgba(201, 162, 39, 0.5), -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+}
+
+.match-leader-box-available:hover .match-leader-card {
+  box-shadow: 0 0 1.5vw rgba(201, 162, 39, 0.8), -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+}
+
+.match-leader-box-used .match-leader-card {
+  filter: grayscale(0.55) brightness(0.55);
+}
+
+.match-leader-active {
+  position: absolute;
+  top: 33%;
+  left: 75%;
+  width: 24%;
+  height: 28%;
+  pointer-events: none;
+}
+
+.match-leader-active > div {
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/icons/icon_leader_active.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Stats - fills .match-stats-area-op / .match-stats-area-me (legacy .stats) */
+.match-stats {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.match-stats > * {
+  position: absolute;
+}
+
+.match-stats-current::before,
+.match-stats-current::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(1px, 0.14vw, 3px);
+  pointer-events: none;
+  z-index: 2;
+  background-color: rgba(218, 165, 32, 0.35);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 38%,
+    rgba(255, 215, 0, 0.95) 50%,
+    transparent 62%,
+    transparent 100%
+  );
+  background-size: 30% 100%;
+  background-repeat: no-repeat;
+  animation: match-stats-current-line 2.4s linear infinite;
+}
+
+.match-stats-current::before {
+  top: 0;
+}
+
+.match-stats-current::after {
+  bottom: 0;
+}
+
+@keyframes match-stats-current-line {
+  0% {
+    background-position: -30% 0;
+  }
+
+  100% {
+    background-position: 130% 0;
+  }
+}
+
+.match-profile-img {
+  left: 5%;
+  top: 9.6%;
+  width: 21.9%;
+  height: 80%;
+  margin-bottom: -24%;
+  background-image: url('/img/icons/profile.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 100%;
+}
+
+.match-profile-img > div {
+  left: -10%;
+  top: -6%;
+  position: relative;
+  height: 118%;
+  width: 118%;
+  background-image: url('/img/icons/icon_player_border.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow: visible;
+}
+
+.match-profile-img > div > div {
+  width: 43%;
+  height: 43%;
+  position: relative;
+  left: -9.5%;
+  top: 0.5%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.match-name {
+  left: 8%;
+  top: 50%;
+  width: 41.5%;
+  height: 20%;
+  margin-bottom: -6%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 1.1vw;
+  font-weight: 700;
+  color: #f1e3ba;
+}
+
+.match-name-me {
+  top: 60%;
+}
+
+.match-deck-name {
+  left: 27%;
+  top: 75%;
+  width: 60%;
+  height: 20%;
+  overflow: hidden;
+  text-transform: capitalize;
+  color: tan;
+  font-size: 16px;
+}
+
+.match-hand-count {
+  top: 26%;
+    left: 36%;
+    height: 37.5%;
+    width: 20%;
+    font-size: 2vw;
+    font-weight: 700;
+    color: #ead8a8;
+    padding-left: 10%;
+    background-image: url(/img/icons/icon_card_count.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+    display: flex;
+    align-items: center;
+}
+
+.match-gem {
+  width: 12%;
+  height: 41%;
+  background-image: url('/img/icons/icon_gem_off.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.match-gem-on {
+  background-image: url('/img/icons/icon_gem_on.png');
+  filter:
+    drop-shadow(0 0 0.28vw rgba(255, 70, 70, 0.55))
+    drop-shadow(0 0 0.65vw rgba(220, 45, 45, 0.28));
+}
+
+.match-gem-op-1, .match-gem-me-1 {
+  top: 31%;
+  left: 76%;
+}
+
+.match-gem-op-2, .match-gem-me-2 {
+  top: 31%;
+  left: 62%;
+}
+
+
+.match-score-total {
+  top: 30%;
+  left: 94.5%;
+  height: 40%;
+  width: 12%;
+  margin-bottom: -12%;
+  color: #000;
+  text-shadow: 0 0 5px #fff;
+  font-size: 2.3vw;
+  font-weight: 700;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: grid;
+  place-items: center;
+}
+
+.match-score-total-me {
+  background-image: url('/img/icons/score_total_me.png');
+}
+
+.match-score-total-op {
+  background-image: url('/img/icons/score_total_op.png');
+}
+
+.match-score-total > div {
+  line-height: 1;
+}
+
+.match-passed {
+  height: 0;
+  width: 0;
+  left: 90%;
+  top: 87%;
+  color: tan;
+  font-size: 1.5vw;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.match-passed-me {
+  top: -3%;
+}
+
+/* --- Weather section - now handled by .match-weather-area (absolute) --- */
+
+.match-weather-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* weather icon: 1/3 of area height = 12.75%/3 of panel = 1.5vw */
+.match-weather-icon {
+  width: 2.4vw;
+  height: 2.4vw;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.22;
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.match-weather-icon-frost  { background-image: url('/img/icons/card_ability_frost.png'); }
+.match-weather-icon-fog    { background-image: url('/img/icons/card_ability_fog.png'); }
+.match-weather-icon-rain   { background-image: url('/img/icons/card_ability_rain.png'); }
+
+.match-weather-icon-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 0.3vw #8ec5ff);
+}
+
+.match-weather-label {
+  font-size: 0.55vw;
+  color: #5f6471;
+  text-transform: uppercase;
+}
+
+.match-weather-label-active {
+  color: #8ec5ff;
+}
+
+/* ========================================================
+   MIDDLE PANEL - Field rows + hand (legacy panel-mid.css)
+   ======================================================== */
+
+.match-opponent-hand {
+  position: absolute;
+  top: -7vw;
+  left: 33vw;
+  height: 6.9vw;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.15vw;
+  padding: 0;
+  min-height: 0;
+  background: none;
+  border: none;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.match-field-wrap {
+  position: absolute;
+  top: 1.2%;
+  left: 0;
+  right: 0;
+  height: 77%;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-field {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.match-field-op {
+  margin-top: -1.1%;
+}
+
+.match-field-row {
+  flex: 0 0 32%;
+  position: relative;
+  min-height: 0;
+  border: none;
+  overflow: visible;
+}
+
+.match-field-row:first-child {
+  border-top: none;
+}
+
+.match-row-selectable {
+  background: rgba(255, 220, 0, 0.12);
+  outline: 1px solid rgba(255, 210, 0, 0.35);
+  outline-offset: -1px;
+  cursor: pointer;
+  animation: match-row-pulse 1.5s ease-in-out infinite;
+}
+
+.match-row-selectable:hover {
+  background: rgba(255, 220, 0, 0.22);
+  box-shadow: inset 0 0 1.5vw rgba(255, 200, 0, 0.35);
+  animation: none;
+}
+
+@keyframes match-row-pulse {
+  0%, 100% { background: rgba(255, 220, 0, 0.10); }
+  50%       { background: rgba(255, 220, 0, 0.18); }
+}
+
+.match-row-weather-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(19, 42, 63, 0.45);
+  z-index: 1;
+}
+
+/* Row score circle */
+.match-row-score {
+  position: absolute;
+  left: 0;
+  top: 10%;
+  width: 5.1%;
+  height: 95%;
+  margin-bottom: -12.65%;
+  display: grid;
+  place-items: center;
+  font-size: 1.8vw;
+  font-weight: 700;
+  color: #000;
+  text-shadow: 0 0 5px #fff;
+  background: transparent;
+  border: none;
+}
+
+/* Row special slot (legacy .row-special - только спецкарты, без иконок ряда) */
+.match-row-special {
+  position: absolute;
+  left: 5.1%;
+  top: 0;
+  width: 14.25%;
+  height: 100%;
+  margin-bottom: -12.65%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  overflow: visible;
+}
+
+.match-row-special .gwent-card-wrap {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.match-row-special .card {
+  height: 100%;
+  width: auto;
+  max-height: 6.9vw;
+  max-width: 4.85vw;
+  min-height: 0;
+  min-width: 0;
+}
+
+.match-row-horn-glow {
+  background: rgba(105, 76, 18, 0.35);
+}
+
+/* Row cards scrollable area */
+.match-row-cards {
+  position: absolute;
+  left: 20%;
+  top: 0;
+  width: 79.7%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 84, 32, 0.5) transparent;
+  z-index: 2;
+}
+
+.match-row-cards .gwent-card-wrap,
+.match-row-cards .card {
+  flex-shrink: 0;
+}
+
+.match-row-cards .gwent-card-wrap {
+  margin: 0 1px;
+}
+
+.match-row-cards .card > div:nth-child(1) > div,
+.match-row-special .card > div:nth-child(1) > div {
+  top: 10%;
+  left: 10%;
+  width: 44%;
+  height: 42%;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.match-row-cards::-webkit-scrollbar {
+  height: 2px;
+}
+
+.match-row-cards::-webkit-scrollbar-thumb {
+  background: rgba(111, 84, 32, 0.5);
+}
+
+/* Divider between opponent and player fields */
+.match-field-divider {
+  flex: 0 0 0;
+  height: 0;
+  background: none;
+}
+
+/* ---- Hand panel (legacy #field-hand) ---- */
+.match-hand-panel {
+  position: absolute;
+  right: 0;
+  bottom: 10%;
+  height: 12%;
+  width: 94%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.match-panel-left .match-hand-actions {
+  position: absolute;
+  top: 82%;
+  left: 63%;
+  width: 20%;
+  height: 4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.match-panel-left .match-hand-actions .match-pass-button {
+  width: 5vw;
+  height: 5vw;
+  min-width: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  border: 2px dotted goldenrod;
+  border-radius: 50%;
+  background-color: rgba(20, 20, 20, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.match-panel-left .match-hand-actions .match-pass-button:hover {
+  background-color: rgba(20, 20, 20, 0.6);
+  box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
+}
+
+.match-panel-left .match-hand-actions .match-pass-button-icon {
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.match-panel-left .match-hand-actions .match-pass-button-pending {
+  font-size: 1.4vw;
+  line-height: 1;
+  font-weight: 700;
+  color: goldenrod;
+}
+
+.match-panel-left .match-hand-actions .match-pass-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.match-hand-row {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0;
+  z-index: 2;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 84, 32, 0.5) transparent;
+}
+
+.match-hand-row .gwent-card-wrap {
+  margin: 0 1px;
+  flex-shrink: 0;
+}
+
+/* ========================================================
+   RIGHT PANEL - Deck / Grave piles
+   .match-grave-op/deck-op/grave-me/deck-me are absolute containers (see above)
+   ======================================================== */
+
+/* .match-card-pile fills its absolute wrapper (legacy .cardpile) */
+.match-card-pile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  overflow: visible;
+  gap: 0;
+}
+
+.match-card-pile-visual {
+  position: relative;
+  top: -5%;
+  margin-top: -108.5%;
+  width: 4.85vw;
+  height: 7.2vw;
+  flex: none;
+  border: none;
+  border-radius: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  box-shadow: -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+}
+
+.match-deck-op .match-card-pile-stacked,
+.match-deck-me .match-card-pile-stacked {
+  display: block;
+}
+
+.match-deck-op .match-deck-pile-stack,
+.match-deck-me .match-deck-pile-stack {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 4.85vw;
+  height: 7.2vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.match-deck-op .match-deck-pile-card,
+.match-deck-me .match-deck-pile-card {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 4.85vw;
+  height: 7.2vw;
+  border: none;
+  border-radius: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  box-shadow: -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+  pointer-events: none;
+}
+
+.match-card-pile-count,
+.match-grave-pile-counter {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.25vw;
+  flex-shrink: 0;
+  width: 2.4vw;
+  height: 2.4vw;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background-color: rgba(20, 20, 20, 0.88);
+  border: 0.12vw solid rgba(139, 105, 20, 0.7);
+  color: tan;
+  font-size: 1.1vw;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 1000;
+  box-sizing: border-box;
+  text-shadow: 0 0 0.2vw rgba(0, 0, 0, 0.8);
+}
+
+.match-grave-pile-counter {
+  pointer-events: none;
+}
+
+.match-grave-pile {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.match-grave-pile-empty {
+  cursor: default;
+}
+
+.match-grave-pile-stack {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 4.85vw;
+  height: 7.2vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.match-grave-pile-card {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.match-grave-pile-card .gwent-card-wrap {
+  pointer-events: none;
+}
+
+.match-grave-pile-card .card {
+  height: 7.2vw;
+  width: 4.85vw;
+  min-height: 0;
+  min-width: 0;
+  max-height: none;
+  max-width: none;
+}
+
+/* ========================================================
+   CARD CHIPS (fallback for missing card images)
+   ======================================================== */
+
+.match-card-chip {
+  width: 2.6vw;
+  height: 3.7vw;
+  min-width: 1.7rem;
+  min-height: 2.4rem;
+  flex: 0 0 auto;
+  border: 1px solid #6f5420;
+  border-radius: 0.2vw;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #2b2520, #111013);
+  color: #ead8a8;
+  font-weight: 700;
+  font-size: 0.65vw;
+}
+
+.match-card-chip strong {
+  border-radius: 999px;
+  background: #d8c27a;
+  color: #17110a;
+  padding: 0 0.2vw;
+}
+
+/* ========================================================
+   MULIGAN OVERLAY
+   ======================================================== */
+
+.match-muligan-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 8, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2vw;
+  z-index: 90;
+}
+
+.match-muligan-title {
+  font-size: 1.6vw;
+  font-weight: 700;
+  color: #c9a227;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.match-muligan-hint {
+  font-size: 0.9vw;
+  color: #a79a7a;
+}
+
+.match-muligan-remaining {
+  font-size: 1vw;
+  color: #f3d56d;
+}
+
+.match-muligan-hand {
+  display: flex;
+  gap: 0.5vw;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 80vw;
+}
+
+.match-muligan-actions {
+  display: flex;
+  gap: 1vw;
+  margin-top: 0.5vw;
+}
+
+.match-muligan-skip {
+  padding: 0.4vw 1.5vw;
+  background: rgba(40, 35, 25, 0.9);
+  border: 1px solid #6f5420;
+  border-radius: 0.3vw;
+  color: #ead8a8;
+  font-size: 0.85vw;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.match-muligan-skip:hover {
+  background: rgba(60, 50, 30, 0.9);
+  border-color: #c9a227;
+  color: #f3d56d;
+}
+
+/* ========================================================
+   OVERLAYS & POPUPS
+   ======================================================== */
+
+.match-popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 8, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 80;
+}
+
+.match-popup-box {
+  border: 1px solid rgba(111, 84, 32, 0.8);
+  background: rgba(20, 18, 22, 0.98);
+  padding: 1.2vw 1.5vw;
+  min-width: 18vw;
+  text-align: center;
+}
+
+.match-popup-box h3 {
+  margin: 0 0 0.6vw;
+  font-size: 1.1vw;
+  color: #c9a227;
+  text-transform: uppercase;
+}
+
+.match-popup-box p {
+  margin: 0 0 0.8vw;
+  font-size: 0.82vw;
+  color: #a79a7a;
+}
+
+.match-popup-btn {
+  padding: 0.35vw 1vw;
+  border: 1px solid #6f5420;
+  border-radius: 0.2vw;
+  background: rgba(20, 17, 18, 0.86);
+  color: #ead8a8;
+  font-size: 0.78vw;
+  font-family: inherit;
+  cursor: pointer;
+  margin: 0 0.3vw;
+}
+
+.match-popup-btn:hover {
+  background: rgba(201, 162, 39, 0.15);
+  border-color: #c9a227;
+  color: #f3d56d;
+}
+
+.match-popup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================================
+   GRAVE CAROUSEL
+   ======================================================== */
+
+.match-grave-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 8, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8vw;
+  z-index: 85;
+}
+
+.match-grave-title {
+  font-size: 1.1vw;
+  font-weight: 700;
+  color: #c9a227;
+}
+
+.match-grave-cards {
+  display: flex;
+  gap: 0.4vw;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 70vw;
+}
+
+/* ========================================================
+   LANDSCAPE COMPACT (800-950 x 400-500)
+   ======================================================== */
+
+@media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) {
+  .match-field-wrap {
+    height: 74%;
+    top: 2%;
+  }
+
+  .match-field-row {
+    flex: 0 0 33%;
+    overflow: hidden;
+  }
+
+  .match-row-cards {
+    align-items: flex-end;
+  }
+
+  .match-row-cards .gwent-card-wrap {
+    height: 94%;
+    max-height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .match-row-cards .card {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 485 / 690;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    max-width: none;
+  }
+
+  .match-row-special .card {
+    max-height: 100%;
+    max-width: none;
+  }
+
+  .match-row-cards .card > div:nth-child(1) > div,
+  .match-row-special .card > div:nth-child(1) > div {
+    top: 16%;
+    left: 12%;
+    width: 42%;
+    height: 38%;
+    font-size: clamp(0.36rem, 2.4vh, 0.5rem);
+  }
+
+  .match-hand-panel {
+    height: 16%;
+    bottom: 6%;
+  }
+
+  .match-hand-row {
+    align-items: flex-end;
+  }
+
+  .match-hand-row .gwent-card-wrap {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .match-hand-row .card {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 485 / 690;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    max-width: none;
+  }
+
+  .match-opponent-hand {
+    top: -15%;
+    left: 28%;
+    width: 44%;
+    height: 13%;
+    align-items: flex-end;
+  }
+
+  .match-opponent-hand .gwent-card-wrap {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .match-opponent-hand .card,
+  .match-opponent-hand .gwent-card-back {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 485 / 690;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    max-width: none;
+  }
+
+  .match-card-pile-visual,
+  .match-deck-op .match-deck-pile-stack,
+  .match-deck-me .match-deck-pile-stack,
+  .match-deck-op .match-deck-pile-card,
+  .match-deck-me .match-deck-pile-card,
+  .match-grave-pile-stack {
+    width: clamp(1.8rem, 4vw, 2.8rem);
+    height: clamp(2.6rem, 5.8vw, 4rem);
+  }
+
+  .match-grave-pile-card .card {
+    height: clamp(2.6rem, 5.8vw, 4rem);
+    width: clamp(1.8rem, 4vw, 2.8rem);
+  }
+
+  .match-card-chip {
+    width: clamp(1.4rem, 2.2vw, 2rem);
+    height: clamp(2rem, 3.1vw, 2.8rem);
+    min-width: 0;
+    min-height: 0;
+  }
+}

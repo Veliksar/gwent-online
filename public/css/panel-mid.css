@@ -1,0 +1,116 @@
+.field {
+	width: 100%;
+	height: 38.5%;
+}
+
+.field .hero {
+	pointer-events: none;
+}
+
+#field-op {
+	top:-1.1%;
+}
+
+#field-op .card {
+	pointer-events: none;
+}
+
+#field-me {
+	top: -1.0%;
+}
+
+#field-hand {
+	width: 100%;
+	height:13%;
+}
+
+.field-row {
+	height: 32%;
+	top: 4%;
+	display:flex;
+	z-index: 1;
+}
+
+.field-row > div {
+	position: absolute;
+}
+
+.row-score {
+	width: 5.1%;
+	top:7%;
+	height: 95%;
+	margin-bottom: -12.65%;
+	font-size: 1.8vw;
+	
+	color: black;
+	text-shadow: 0 0 5px white;
+}
+
+.row-special {
+	width: 14.25%;
+	height: 100%;
+	left: 5.1%;
+	margin-bottom: -12.65%;
+}
+
+.row-cards {
+	height: 100%;
+	width: 80.65%;
+	left: 19.35%;
+
+	left: 20%;
+	width: 79.7%;
+}
+
+.row-weather {
+	position: absolute;
+	top: 5%;
+	left: 5.75%;
+	width: 94.25%;
+	height: 100%;
+	
+	pointer-events : none;
+	
+	background-size: cover;
+	background-position: bottom;
+	background-repeat: no-repeat;
+}
+.frost { background-image: url('../img/icons/overlay_frost.png'); }
+.rain  { background-image: url('../img/icons/overlay_rain.png');  }
+.fog   { background-image: url('../img/icons/overlay_fog.png');   }
+
+#hand-row {
+	top: 8%;
+	height:91%;
+	left: 7.1%;
+	width: 92.5%;
+	z-index: 1;
+}
+
+.row-selectable {
+	background-color: rgba(255,255,0, 0.08);
+}
+
+.row-selectable:hover {
+	box-shadow: 0 0 .25vw rgba(255,255,0, 1);
+	/*outline: .25vw solid rgba(255,255,0, 0.5);*/
+	box-sizing: border-box;
+}
+
+.card-selectable > .card:hover {
+	/*box-shadow: 0 0 .2vw rgba(255,255,0, 0.5);*/
+	border: .12vw outset goldenrod;
+	border-radius: .3vw;
+	margin-bottom: 1vw;
+	z-index: 1;
+}
+
+/*
+#hand-row > .card {
+	position: relative;
+	position: absolute;
+	
+	height: 100%;
+	width: 9.35%;
+}
+*/

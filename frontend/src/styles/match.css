@@ -1,0 +1,639 @@
+@import './match-layout.css';
+
+.gwent-card-wrap {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.card {
+  height: 6.9vw;
+  width: 4.85vw;
+  min-height: 5.2rem;
+  min-width: 3.6rem;
+  max-height: 6.9rem;
+  max-width: 4.85rem;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid #6f5420;
+  border-radius: 0.18vw;
+  appearance: none;
+  background-color: #171316;
+  background-image:
+    radial-gradient(circle at 50% 22%, rgba(201, 162, 39, 0.22), transparent 34%),
+    linear-gradient(145deg, #3b2c20, #111013 68%);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: -0.1vw -0.1vw 0.5vw rgba(20, 20, 20, 0.5);
+  transition: margin-bottom 0.05s, margin-left 0.25s, margin-right 0.25s, transform 0.5s;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.card:disabled {
+  cursor: default;
+}
+
+.card > div {
+  position: relative;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.gwent-card-fallback {
+  display: none;
+}
+
+.gwent-card-back-mark {
+  display: none;
+}
+
+.card > div:nth-child(1) {
+  top: -4%;
+  left: -4%;
+  width: 70%;
+  height: 50%;
+  margin-bottom: -71%;
+  background-position: 0 0;
+}
+
+.card > div:nth-child(1) > div {
+  top: 6%;
+  left: 6%;
+  width: 50%;
+  height: 50%;
+  font-size: clamp(0.72rem, 1vw, 1rem);
+  font-weight: 600;
+  color: black;
+  position: absolute;
+}
+
+.hero > div:nth-child(1) > div {
+  color: white;
+  text-shadow: 0 0 0.1vw black;
+}
+
+.card > div:nth-child(2) {
+  top: 75%;
+  left: 65%;
+  width: 33%;
+  height: 22%;
+  margin-bottom: -32%;
+}
+
+.card > div:nth-child(3) {
+  top: 75%;
+  left: 31%;
+  width: 33%;
+  height: 22%;
+  margin-bottom: -32%;
+  font-size: 1vw;
+}
+
+.card > div:nth-child(4) {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: 40% auto;
+  opacity: 0;
+  transition: background-size 0.25s;
+}
+
+.gwent-card-selected {
+  transform: translateY(-0.55rem);
+  outline: 0.12vw outset goldenrod;
+  border-radius: 0.3vw;
+  z-index: 5;
+}
+
+.gwent-card-weathered:not(.hero)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(67, 132, 183, 0.24);
+  pointer-events: none;
+}
+
+.gwent-card-back {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(201, 162, 39, 0.32), transparent 42%),
+    linear-gradient(135deg, rgba(201, 162, 39, 0.2), transparent),
+    linear-gradient(145deg, #332119, #09080a);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: grid;
+  place-items: center;
+}
+
+
+.card-selectable > .card:hover,
+.gwent-card-wrap:hover > .card:not(:disabled),
+.match-hand-row .gwent-card-wrap:hover > .card {
+  border: 0.12vw outset goldenrod;
+  border-radius: 0.3vw;
+}
+
+.card-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  pointer-events: none;
+}
+
+.gwent-card-wrap:hover .card-preview {
+  display: block;
+}
+
+.card-preview > .card-lg {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+}
+
+.card-preview > .card-description {
+  top: 60%;
+  left: 48%;
+  border-radius: 20px;
+}
+
+.card-lg {
+  height: 30.4vw;
+  width: 16.1vw;
+  border-radius: 1.5vw;
+  background-color: #171316;
+  background-image:
+    radial-gradient(circle at 50% 24%, rgba(201, 162, 39, 0.22), transparent 34%),
+    linear-gradient(145deg, #3b2c20, #111013 68%);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.card-lg > span {
+  width: 78%;
+  color: #ead8a8;
+  text-align: right;
+  font-size: 1.1vw;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 2px 2px 2px #000;
+  position: absolute;
+  bottom: 13%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.card-description {
+  position: absolute;
+  height: 7vw;
+  width: 20vw;
+  background-color: rgba(20, 20, 20, 0.9);
+  color: tan;
+  text-align: center;
+  pointer-events: none;
+  border: 1px solid #6d5210;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-description > * {
+  position: relative;
+}
+
+.card-description > div {
+  top: -15px;
+  left: 15px;
+  width: 1.95vw;
+  height: 1.95vw;
+  margin-bottom: -1.9vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-description > h1 {
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 1vw;
+}
+
+.card-description > p {
+  overflow: hidden;
+  font-size: 0.8vw;
+}
+
+@media (max-width: 960px) {
+  .card-preview {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) and (min-height: 521px) {
+  .card {
+    height: 5.7rem;
+    width: 4rem;
+  }
+}
+
+@media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) {
+  .card {
+    height: clamp(2.4rem, 11vh, 3.4rem);
+    width: auto;
+    aspect-ratio: 485 / 690;
+    min-height: 0;
+    min-width: 0;
+    max-height: clamp(2.4rem, 11vh, 3.4rem);
+    max-width: none;
+  }
+
+  .gwent-card-selected {
+    transform: translateY(-0.3rem);
+  }
+}
+
+.hide {
+  display: none !important;
+}
+
+.gwent-card-animation {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 40% auto;
+  opacity: 0;
+  transition: background-size 0.25s, opacity 0.3s;
+}
+
+.gwent-card-anim-bond .gwent-card-animation {
+  background-image: url('/img/icons/anim_bond.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-anim-spy .gwent-card-animation {
+  background-image: url('/img/icons/anim_spy.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-anim-medic .gwent-card-animation {
+  background-image: url('/img/icons/anim_medic.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-anim-scorch .gwent-card-animation {
+  background-image: url('/img/icons/anim_scorch.png');
+  background-size: cover;
+  animation: gwent-card-scorch 1.9s ease-in-out;
+}
+
+.gwent-card-anim-horn .gwent-card-animation {
+  background-image: url('/img/icons/anim_horn.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-anim-morale .gwent-card-animation {
+  background-image: url('/img/icons/anim_morale.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-anim-muster .gwent-card-animation {
+  background-image: url('/img/icons/anim_muster.png');
+  animation: gwent-card-ability-pulse 1.6s ease-in-out;
+}
+
+.gwent-card-ghost > .card {
+  pointer-events: none;
+  animation: gwent-card-ghost-exit 2s ease-in-out forwards;
+}
+
+@keyframes gwent-card-ghost-exit {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes gwent-card-enter {
+  from {
+    transform: translateY(-1.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.gwent-card-entering .card {
+  animation: gwent-card-enter 0.5s ease-out both;
+}
+
+@keyframes gwent-card-ability-pulse {
+  0% {
+    opacity: 0;
+    background-size: 40% auto;
+  }
+  20% {
+    opacity: 1;
+    background-size: 100% auto;
+  }
+  75% {
+    opacity: 1;
+    background-size: 80% auto;
+  }
+  100% {
+    opacity: 0;
+    background-size: 40% auto;
+  }
+}
+
+@keyframes gwent-card-scorch {
+  0% {
+    opacity: 0;
+  }
+  18%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#notification-bar.match-notification-bar {
+  position: fixed;
+  left: 0;
+  top: 43%;
+  width: 100%;
+  height: 14%;
+  background-color: rgba(10, 10, 10, 0.95);
+  z-index: 100;
+  animation: match-notification-fade 1.2s ease-in-out both;
+}
+
+#notification-bar.match-notification-bar > div {
+  position: absolute;
+  top: -66.6%;
+  left: 22.55%;
+  width: 22.1%;
+  height: 207.25%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+#notification-bar.match-notification-bar > div > span {
+  position: absolute;
+  left: 100.5%;
+  top: 32.1%;
+  width: 205%;
+  height: 47.25%;
+  display: flex;
+  align-items: center;
+  color: goldenrod;
+  font-size: 1.6vw;
+  font-weight: 700;
+  text-align: left;
+}
+
+@keyframes match-notification-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12%,
+  82% {
+    opacity: 1;
+  }
+}
+
+#carousel.grave-carousel {
+  position: fixed;
+  inset: 0;
+  height: calc(100vw * 1080 / 1920);
+  min-height: 100vh;
+  background: rgba(10, 10, 10, 0.72);
+  z-index: 90;
+}
+
+.grave-carousel-cards {
+  width: 100%;
+  height: 100%;
+  padding: 11.5% 10%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.grave-carousel-card {
+  display: inline-block;
+  background-color: #171316;
+  background-size: cover;
+  background-position: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.grave-carousel-card:nth-child(2n) {
+  width: 13.75vw;
+  height: 25.9vw;
+}
+
+.grave-carousel-card:nth-child(4n - 3) {
+  width: 11.3vw;
+  height: 21.3vw;
+  margin: 0 2.75%;
+}
+
+.grave-carousel-card-current {
+  border: 0.3vw solid goldenrod;
+  box-shadow: 0 0 4vw goldenrod;
+  background-origin: border-box;
+}
+
+.grave-carousel-description {
+  left: 35.35%;
+  top: 77%;
+}
+
+.grave-carousel-title {
+  position: absolute;
+  top: 12%;
+  width: 100%;
+  height: 7.5%;
+  background-color: rgba(10, 10, 10, 0.95);
+  box-shadow: 0 0 1vw #ffffff54;
+  color: goldenrod;
+  text-align: center;
+  font-size: 1.75vw;
+  line-height: 250%;
+}
+
+.match-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background-color: rgba(10, 10, 10, 0.92);
+}
+
+.match-popup-card {
+  width: min(30rem, 86vw);
+  border: 0.2vw ridge rgb(40, 40, 40);
+  background-color: rgb(20, 20, 20);
+  color: tan;
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: 0 0 2vw rgba(0, 0, 0, 0.65);
+}
+
+.match-popup-card-wide {
+  width: min(52rem, 92vw);
+}
+
+.match-popup-card h2 {
+  margin: 0 0 0.75rem;
+  color: goldenrod;
+}
+
+.match-popup-card p {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.match-popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.match-popup-actions button,
+#end-screen button {
+  color: goldenrod;
+  background-color: #4c390a66;
+  border: 0.2vw solid #1d180b;
+  border-radius: 1vw;
+  box-shadow: 0 0 2vw #6d5210;
+  cursor: pointer;
+}
+
+.match-popup-actions button {
+  min-width: 9rem;
+  padding: 0.65rem 1rem;
+}
+
+.match-reveal-cards {
+  display: flex;
+  justify-content: center;
+  gap: 1vw;
+  margin: 1rem 0;
+}
+
+.match-reveal-card {
+  width: 11.3vw;
+  height: 21.3vw;
+  background-size: cover;
+  background-position: center;
+}
+
+#end-screen.match-end-screen {
+  width: 100%;
+  min-height: 100vh;
+  height: calc(100vw * 1080 / 1920);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(10, 10, 10, 0.95);
+}
+
+#end-screen.match-end-screen * {
+  position: relative;
+}
+
+#end-screen.match-end-screen > :nth-child(1) {
+  top: 12.6%;
+  left: 32.9%;
+  width: calc(100% * 656 / 1920);
+  height: calc(100% * 416 / 1080);
+  margin-bottom: -21.65%;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.end-draw {
+  background-image: url('/img/icons/end_draw.png');
+}
+
+.end-win {
+  background-image: url('/img/icons/end_win.png');
+}
+
+.end-lose {
+  background-image: url('/img/icons/end_lose.png');
+}
+
+#end-screen.match-end-screen > table {
+  top: 55%;
+  left: 7.6%;
+  width: 74%;
+  height: 22%;
+  margin-bottom: -12.3%;
+  table-layout: fixed;
+}
+
+#end-screen.match-end-screen tbody :first-child th {
+  color: rgb(100, 100, 100);
+  font-size: 0.9vw;
+  text-align: center;
+}
+
+#end-screen.match-end-screen td {
+  color: rgb(180, 180, 180);
+  font-size: 1.7vw;
+  text-align: center;
+}
+
+#end-screen.match-end-screen td.match-end-round-won {
+  color: goldenrod;
+}
+
+#end-screen.match-end-screen tr :first-child {
+  color: darkorange;
+  font-size: 1.2vw;
+  text-align: right;
+  padding-right: 5%;
+}
+
+#end-screen.match-end-screen > p {
+  top: 80%;
+  left: 30.1%;
+  width: 41%;
+  height: 3%;
+  color: rgb(180, 180, 180);
+  font-size: 1.21vw;
+}
+
+#end-screen.match-end-screen button {
+  position: absolute;
+  top: 87%;
+  left: 45%;
+  width: 10vw;
+  height: 3vw;
+  font-family: Arial Narrow, sans-serif;
+  font-size: 1.5vw;
+}

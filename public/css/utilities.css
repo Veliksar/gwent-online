@@ -1,0 +1,18 @@
+.center {
+	display: flex;
+	justify-content: center;
+	align-items:center;
+}
+
+.bg-contain{
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.visible { display: visible; }
+.hide {display: none; }
+.fade {opacity: 0.2; filter: alpha(opacity=20); }
+
+.noclick {
+	pointer-events: none;
+}

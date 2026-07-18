@@ -1,0 +1,192 @@
+#deck-customization {
+	position: absolute;
+	width: 100%;
+	height: calc(100vw * 1080 / 1920);
+	background-color: rgba(10,10,10,.95);
+	z-index: 85;
+}
+
+#faction-title {
+	position: absolute;
+	height: 5%;
+	width: 100%;
+	top: 6%;
+}
+
+#deck-customization h1 {
+    position: absolute;
+    font-size: 1.45vw;
+    color: #dedede;
+    line-height: 220%;
+    text-transform: capitalize;
+    padding: 0 3%;
+	
+
+	
+	top: -60%;
+	
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#faction-description {
+	position: absolute;
+	font-size: 1.14vw;
+	color: #ab977c;
+	top: 9.45%;
+	left: 20.2%;
+	width: 60%;
+	text-align: center;
+}
+
+.deck-options{
+	position: absolute;
+	font-size: 1vw;
+	color: white;
+	top: 15%;
+}
+
+#download-deck {
+	left: 55%;
+}
+
+#upload-deck {
+	left: 40%;
+}
+
+#change-faction {
+	left: 47%;
+}
+
+.card-array {
+	position: absolute;
+	width: 34.4%;
+	height: 68%;
+	overflow-y: scroll;
+	padding: .1vw 1.1vw;
+	display: flex;
+	flex-wrap:wrap;
+	justify-content: space-between;
+}
+
+#card-bank {
+	top: 22.5%;
+	left: 8.275%;
+}
+
+#card-deck {
+	top: 22.5%;
+	left: 58.4%;
+}
+
+.card-array .card-lg {
+    width: 9.88vw;
+    height: 18.45vw;
+    border-radius: 1vw;
+	margin-bottom: 0.75vw;
+}
+
+.card-array .card-lg > div {
+	position: relative;
+	top: 82.5%;
+	left: 76%;
+	width: 20%;
+	height: 7%;
+	font-size: 1.2vw;
+	color: #5f4923;
+	padding-left: 1.7vw;
+	background-image: url('../img/icons/preview_count.png');
+	background-position: left;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+#card-leader {
+	position: absolute;
+	height: 27%;
+	width: 6.9%;
+	top: 20.8%;
+	left: 46.6%;
+}
+
+#card-leader p {
+	font-size: 1.1vw;
+	text-align: center;
+	color: #8f6c36;
+	line-height: 0%;
+	margin: 9%;
+}
+
+#card-leader > div {
+	position: relative;
+	height: 84.5%;
+	margin-top: 24.5%;
+	
+	background-size: contain;
+	border-radius: .5vw;
+}
+
+#deck-stats {
+	position: absolute;
+	width: 12%;
+	height: 30%;
+	top: 49.5%;
+	left: 44.05%;
+}
+
+#deck-stats > p:nth-child(odd) {
+	color: #82735f;
+	font-size: 1.05vw;
+	text-align: center;
+	margin-bottom: -6.75%;
+}
+
+#deck-stats > p:nth-child(even) {
+	font-size: 1.2vw;
+	text-align: left;
+	color: #9f7d3e;
+	padding-left: 2.3vw;
+	margin-left: 3.95vw;
+	margin-bottom: -6.75%;
+	
+	background-repeat: no-repeat;
+	background-position: left;
+	background-size: 2.5vw;
+}
+
+#deck-stats > p:nth-child(2) { background-image: url('../img/icons/deck_stats_count.png'); }
+#deck-stats > p:nth-child(4) { background-image: url('../img/icons/deck_stats_unit.png'); }
+#deck-stats > p:nth-child(6) { background-image: url('../img/icons/deck_stats_special.png'); }
+#deck-stats > p:nth-child(8) { background-image: url('../img/icons/deck_stats_strength.png'); }
+#deck-stats > p:nth-child(10) { background-image: url('../img/icons/deck_stats_hero.png'); }
+
+#start-game {
+	position: absolute;
+	top: 86%;
+	left: 46.65%;
+	width: 6%;
+	height: 3%;
+	font-size: 0.98vw;
+	white-space: nowrap;
+	color: white;
+	background-color: rgb(20,20,20);
+	border: 0.1vw ridge rgb(30,30,30);
+}
+
+.card-contianer-title {
+	position: absolute;
+	width: 10%;
+	height: 3%;
+	font-size: 1.3vw;
+	color: #959595;
+}
+
+#card-bank-title {
+	top: 7.45%;
+	left: 8.5%;
+}
+
+#card-deck-title {
+	top: 7.8%;
+	left: 84.45%;
+}

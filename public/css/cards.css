@@ -1,0 +1,102 @@
+.card {
+	/*height: 100%;
+	width: auto;*/
+	/*width: calc(100% * 775 / 410);*/
+	
+	height: 6.35vw;
+	width: 4.45vw;
+	
+	background-size:contain;
+	background-repeat: no-repeat;
+	
+	box-shadow: -.1vw -.1vw .5vw rgba(20,20,20, 0.5);
+	
+	display: inline-block;
+	
+	/*position: absolute;*/
+	position: relative;
+	
+	transition: margin-bottom 0.05s, margin-left .25s, margin-right .25s, transform 0.5s;
+	
+	z-index:1;
+}
+
+.deck-card .card { position : absolute; }
+
+.card > div {
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.card > div:nth-child(1) {
+	top: -4%;
+	left: -4%;
+	width: 70%;
+	height: 50%;
+	margin-bottom: -71%;
+	
+	background-position: 0 0;
+	
+}
+
+.card > div:nth-child(1) > div {
+	top: 13%;
+	left: 7%;
+	width: 50%;
+	height:  50%;
+	font-size: 1vw;
+	font-weight: bold;
+	color: black;
+	text-shadow: 0 0 .1vw white;
+}
+
+.hero > div:nth-child(1) > div {
+	color: white;
+	text-shadow: 0 0 .1vw black;
+}
+
+
+
+.card > div:nth-child(2) {
+	top: 75%;
+	left: 65%;
+	width: 33%;
+	height: 22%;
+	margin-bottom: -32%;
+	/*border: 1px solid blue;*/
+}
+
+.card > div:nth-child(3){
+	top: 75%;
+	left: 31%;
+	width: 33%;
+	height: 22%;
+	margin-bottom: -32%;
+	
+	font-size: 1vw;
+	/*border: 1px solid red;*/
+}
+
+.card > div:nth-child(4) {
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-size: 40% auto;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	transition: background-size 0.25s;
+}
+
+.card-container {
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+
+.card-container .card {
+	margin: 0 1px;
+	flex-shrink: 0;
+	/*margin: 0 -10px;*/
+	/*margin: 0 calc((100% - (4.45vw * 14)) / 26);*/
+}

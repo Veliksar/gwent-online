@@ -1,0 +1,67 @@
+#carousel {
+	position:absolute;
+	width: 100%;
+	height: calc(100vw * 1080 / 1920);
+	z-index:90;
+}
+
+/*
+#carousel > :nth-child(1) {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border: 1px solid blue;
+	z-index: -1;
+	background-image: url('../img/icons/blank.png');
+	background-size: cover;
+}
+*/
+
+#carousel > :nth-child(1) {
+	width:100%;
+	height:100%;
+	padding: 11.5% 10%;
+	display:flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+#carousel > :nth-child(1)  > :nth-child(3){
+	border: .3vw solid goldenrod;
+	box-shadow: 0 0 4vw goldenrod;
+	background-origin: border-box;
+}
+
+#carousel > :nth-child(1)  > :nth-child(2n) {
+	width: 13.75vw;
+	height: 25.9vw;
+}
+
+#carousel > :nth-child(1)  > :nth-child(4n - 3) {
+	width: 11.3vw;
+	height: 21.3vw;
+	margin: 0 2.75%;
+}
+
+#carousel .card-lg {
+	display:inline-block;
+	background-size:cover;
+	background-position: center;
+}
+
+#carousel .card-description {
+	left: 35.35%;
+	top: 77%;
+}
+
+#carousel > :nth-child(3) {
+	position: absolute;
+    width: 100%;
+    height: 7.5%;
+    top: 12%;
+    font-size: 1.75vw;
+    line-height: 250%;
+    background-color: rgba(10,10,10,.95);
+    text-align: center;
+    box-shadow: 0 0 1vw #ffffff54;
+}
