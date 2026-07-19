@@ -1,4 +1,5 @@
 import type { GameMatch, MatchPlayer } from '../../api/match'
+import { useT } from '../../i18n'
 
 export function GameEndScreen({
   winnerId,
@@ -15,10 +16,11 @@ export function GameEndScreen({
   roundHistory: GameMatch['round_history']
   onBackToMenu: () => void
 }) {
+  const t = useT()
   const resultClass = isDraw ? 'end-draw' : winnerId === me?.user_id ? 'end-win' : 'end-lose'
   const rows = [
-    { player: me, title: me?.nickname ?? 'Вы' },
-    { player: opponent, title: opponent?.nickname ?? 'Соперник' },
+    { player: me, title: me?.nickname ?? t.match.youFallback },
+    { player: opponent, title: opponent?.nickname ?? t.match.opponentFallback },
   ]
 
   return (
@@ -28,10 +30,10 @@ export function GameEndScreen({
         <tbody>
           <tr>
             <th />
-            <th>Раунд 1</th>
-            <th>Раунд 2</th>
-            <th>Раунд 3</th>
-            <th>Gems</th>
+            <th>{t.match.round(1)}</th>
+            <th>{t.match.round(2)}</th>
+            <th>{t.match.round(3)}</th>
+            <th>{t.match.gems}</th>
           </tr>
           {rows.map(({ player, title }) => (
             <tr key={title}>
@@ -54,9 +56,9 @@ export function GameEndScreen({
           ))}
         </tbody>
       </table>
-      {isDraw && <p>Матч завершился вничью.</p>}
+      {isDraw && <p>{t.match.matchDraw}</p>}
       <button type="button" onClick={onBackToMenu}>
-        Menu
+        {t.match.menu}
       </button>
     </div>
   )

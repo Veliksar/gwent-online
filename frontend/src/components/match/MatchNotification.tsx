@@ -1,22 +1,5 @@
 import { iconUrl } from '../../utils/cardAssets'
-
-const NOTIFICATION_TEXT: Record<string, string> = {
-  'me-coin': 'Вы ходите первым',
-  'op-coin': 'Соперник ходит первым',
-  'round-start': 'Начало раунда',
-  'me-pass': 'Вы спасовали',
-  'op-pass': 'Соперник спасовал',
-  'win-round': 'Вы выиграли раунд!',
-  'lose-round': 'Соперник выиграл раунд',
-  'draw-round': 'Ничья в раунде',
-  'me-turn': 'Ваш ход!',
-  'op-turn': 'Ход соперника',
-  north: 'Свойство фракции Королевства Севера: взят дополнительный раунд/карта.',
-  monsters: 'Свойство фракции Чудовища: одна случайная карта осталась на поле.',
-  scoiatael: "Соперник использовал свойство Скоя'таэлей ходить первым.",
-  'skellige-me': 'Свойство Скеллиге активировано!',
-  'skellige-op': 'Свойство Скеллиге соперника активировано!',
-}
+import { useT } from '../../i18n'
 
 const NOTIFICATION_ICON: Record<string, string> = {
   'me-coin': 'notif_me_coin',
@@ -37,6 +20,8 @@ const NOTIFICATION_ICON: Record<string, string> = {
 }
 
 export function MatchNotification({ name, message }: { name: string | null; message?: string }) {
+  const t = useT()
+
   if (!name && !message) return null
 
   const iconName = name ? NOTIFICATION_ICON[name] ?? 'notif_round_start' : 'notif_round_start'
@@ -51,7 +36,7 @@ export function MatchNotification({ name, message }: { name: string | null; mess
         id={name ? `notif-${name}` : undefined}
         style={{ backgroundImage: `url("${iconUrl(iconName)}")` }}
       >
-        <span>{message || (name ? NOTIFICATION_TEXT[name] : '')}</span>
+        <span>{message || (name ? t.notifications[name] ?? '' : '')}</span>
       </div>
     </div>
   )

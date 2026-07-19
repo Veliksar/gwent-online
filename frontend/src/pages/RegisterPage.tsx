@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '../api/auth'
 import { useAuthStore } from '../stores/authStore'
+import { useT } from '../i18n'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ export default function RegisterPage() {
     nickname: '',
   })
   const [error, setError] = useState('')
+  const t = useT()
 
   const registerMutation = useMutation({
     mutationFn: authApi.register,
@@ -25,9 +27,9 @@ export default function RegisterPage() {
       const errors = err.response?.data?.errors
       if (errors) {
         const firstError = Object.values(errors)[0]?.[0]
-        setError(firstError || 'Ошибка регистрации')
+        setError(firstError || t.register.error)
       } else {
-        setError(err.response?.data?.message || 'Ошибка регистрации')
+        setError(err.response?.data?.message || t.register.error)
       }
     },
   })
@@ -35,12 +37,12 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    
+
     if (formData.password !== formData.password_confirmation) {
-      setError('Пароли не совпадают')
+      setError(t.register.passwordsMismatch)
       return
     }
-    
+
     registerMutation.mutate(formData)
   }
 
@@ -49,7 +51,7 @@ export default function RegisterPage() {
       <div className="panel max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gwent-gold mb-2">Gwent Classic</h1>
-          <p className="text-gray-400">Создайте новый аккаунт</p>
+          <p className="text-gray-400">{t.register.subtitle}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -60,7 +62,7 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Никнейм</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.register.nickname}</label>
             <input
               type="text"
               className="input-field"
@@ -73,7 +75,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.register.email}</label>
             <input
               type="email"
               className="input-field"
@@ -84,7 +86,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Пароль</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.register.password}</label>
             <input
               type="password"
               className="input-field"
@@ -96,7 +98,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Подтвердите пароль</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.register.passwordConfirm}</label>
             <input
               type="password"
               className="input-field"
@@ -111,14 +113,14 @@ export default function RegisterPage() {
             className="btn-gold w-full"
             disabled={registerMutation.isPending}
           >
-            {registerMutation.isPending ? 'Регистрация...' : 'Зарегистрироваться'}
+            {registerMutation.isPending ? t.register.submitting : t.register.submit}
           </button>
         </form>
 
         <p className="text-center mt-6 text-gray-400">
-          Уже есть аккаунт?{' '}
+          {t.register.haveAccount}{' '}
           <Link to="/login" className="text-gwent-gold hover:underline">
-            Войти
+            {t.register.loginLink}
           </Link>
         </p>
       </div>

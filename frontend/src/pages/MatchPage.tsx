@@ -9,6 +9,7 @@ import { sandboxApi } from '../api/sandbox'
 import { cardsApi, type CardDefinition } from '../api/cards'
 import { lobbyApi } from '../api/lobby'
 import { getEcho } from '../services/echo'
+import { useT } from '../i18n'
 import { GameEndScreen } from '../components/match/GameEndScreen'
 import { MatchBoard } from '../components/match/MatchBoard'
 import type { GhostCard } from '../components/match/MatchField'
@@ -51,6 +52,10 @@ export default function MatchPage() {
   const { match, setMatch, clearMatch } = useMatchStore()
   const { user } = useAuthStore()
   const { clearLobby } = useLobbyStore()
+  const t = useT()
+  // Echo-слушатели регистрируются один раз на матч — берут актуальный словарь через ref
+  const tRef = useRef(t)
+  tRef.current = t
 
   const [fsm, setFsm] = useState<MatchFsm>({ mode: 'idle' })
   const [statusMsg, setStatusMsg] = useState('')
@@ -451,10 +456,10 @@ export default function MatchPage() {
 
     channel.listen('.match.pass', async (data: { user_id: number }) => {
       if (data.user_id !== user?.id) {
-        setStatusMsg('Соперник спасовал')
+        setStatusMsg(tRef.current.match.opponentPassed)
         showNotification('op-pass')
       } else {
-        setStatusMsg('Вы спасовали')
+        setStatusMsg(tRef.current.match.youPassed)
         showNotification('me-pass')
       }
       await syncTurn()
@@ -463,13 +468,13 @@ export default function MatchPage() {
     channel.listen('.match.round_end', async (data: { round_winner_id: number | null; current_round: number }) => {
       // Уведомление итога раунда до обновления состояния, чтобы round-start встал в очередь после него
       if (data.round_winner_id === user?.id) {
-        setStatusMsg(`Вы выиграли раунд! Раунд ${data.current_round}`)
+        setStatusMsg(tRef.current.match.winRound(data.current_round))
         showNotification('win-round')
       } else if (data.round_winner_id) {
-        setStatusMsg(`Соперник выиграл раунд. Раунд ${data.current_round}`)
+        setStatusMsg(tRef.current.match.loseRound(data.current_round))
         showNotification('lose-round')
       } else {
-        setStatusMsg(`Ничья в раунде. Раунд ${data.current_round}`)
+        setStatusMsg(tRef.current.match.drawRound(data.current_round))
         showNotification('draw-round')
       }
       await refreshState()
@@ -491,7 +496,7 @@ export default function MatchPage() {
 
       await refreshState()
       if (data.user_id !== user?.id) {
-        setStatusMsg('Соперник использовал лидера')
+        setStatusMsg(tRef.current.match.opponentUsedLeader)
       }
       if (data.leader_result?.type === 'reveal_hand' && Array.isArray(data.leader_result.cards)) {
         setRevealCards(data.leader_result.cards)
@@ -522,7 +527,7 @@ export default function MatchPage() {
       applyMatchResponse(data)
       if (data.pending_medic || data.match?.pending_medic) {
         setFsm({ mode: 'medic_select' })
-        setStatusMsg('Выберите карту из кладбища для медика')
+        setStatusMsg(t.match.medicSelectHint)
       } else {
         setFsm({ mode: 'idle' })
         setStatusMsg('')
@@ -532,7 +537,7 @@ export default function MatchPage() {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : null
-      setStatusMsg(msg || 'Ошибка при разыгрывании карты')
+      setStatusMsg(msg || t.match.errPlayCard)
     },
   })
 
@@ -547,7 +552,7 @@ export default function MatchPage() {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : null
-      setStatusMsg(msg || 'Ошибка при выборе карты медика')
+      setStatusMsg(msg || t.match.errMedic)
     },
   })
 
@@ -567,7 +572,7 @@ export default function MatchPage() {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : null
-      setStatusMsg(msg || 'Ошибка при использовании лидера')
+      setStatusMsg(msg || t.match.errLeader)
     },
   })
 
@@ -582,18 +587,18 @@ export default function MatchPage() {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : null
-      setStatusMsg(msg || 'Ошибка при выборе первого хода')
+      setStatusMsg(msg || t.match.errChooseFirst)
     },
   })
 
   const passMutation = useMutation({
     mutationFn: matchApi.pass,
     onSuccess: (data) => {
-      setStatusMsg('Вы спасовали')
+      setStatusMsg(t.match.youPassed)
       showNotification('me-pass')
       applyMatchResponse(data)
     },
-    onError: () => setStatusMsg('Ошибка при пасе'),
+    onError: () => setStatusMsg(t.match.errPass),
   })
 
   const redrawMutation = useMutation({
@@ -601,7 +606,7 @@ export default function MatchPage() {
     onSuccess: (data) => {
       applyMatchResponse(data)
     },
-    onError: () => setStatusMsg('Ошибка при замене карты'),
+    onError: () => setStatusMsg(t.match.errRedraw),
   })
 
   const redrawSkipMutation = useMutation({
@@ -609,7 +614,7 @@ export default function MatchPage() {
     onSuccess: (data) => {
       applyMatchResponse(data)
     },
-    onError: () => setStatusMsg('Ошибка при пропуске замены'),
+    onError: () => setStatusMsg(t.match.errRedrawSkip),
   })
 
   const leaveMutation = useMutation({
@@ -625,7 +630,7 @@ export default function MatchPage() {
       clearLobby()
       navigate('/')
     },
-    onError: () => setStatusMsg('Не удалось покинуть матч'),
+    onError: () => setStatusMsg(t.match.errLeave),
   })
 
   const handleBackToMenu = () => {
@@ -648,7 +653,7 @@ export default function MatchPage() {
   if (!match) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gwent-gold text-xl">{loading ? 'Загрузка матча...' : 'Матч не найден'}</div>
+        <div className="text-gwent-gold text-xl">{loading ? t.match.loading : t.match.notFound}</div>
       </div>
     )
   }
@@ -658,7 +663,7 @@ export default function MatchPage() {
   const isMyTurn = match.current_player_id === user?.id
 
   const roundEndingMsg = localRoundEndingSeconds !== null
-    ? `Оба игрока спасовали - раунд завершается через ${localRoundEndingSeconds} сек`
+    ? t.match.roundEnding(localRoundEndingSeconds)
     : ''
 
   const selectedCard = fsm.mode === 'card_selected' || fsm.mode === 'decoy_select' ? fsm.cardIndex : null
@@ -681,7 +686,7 @@ export default function MatchPage() {
     const card = cardsByIndex.get(cardIndex)
     if (card?.abilities.includes('decoy')) {
       setFsm({ mode: 'decoy_select', handPos, cardIndex })
-      setStatusMsg('Выберите свою негероическую карту на поле для Decoy')
+      setStatusMsg(t.match.decoySelectHint)
       return
     }
 
@@ -702,7 +707,7 @@ export default function MatchPage() {
   if (!myPlayer || !opponent) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gwent-gold text-xl">Некорректное состояние матча</div>
+        <div className="text-gwent-gold text-xl">{t.match.invalidState}</div>
       </div>
     )
   }

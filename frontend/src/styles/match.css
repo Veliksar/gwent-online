@@ -452,7 +452,7 @@
   height: calc(100vw * 1080 / 1920);
   min-height: 100vh;
   background: rgba(10, 10, 10, 0.72);
-  z-index: 90;
+  z-index: 200;
 }
 
 .grave-carousel-cards {

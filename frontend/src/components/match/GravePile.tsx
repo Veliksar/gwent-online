@@ -1,5 +1,6 @@
 import type { CardDefinition } from '../../api/cards'
 import { GwentCard } from './GwentCard'
+import { useT } from '../../i18n'
 
 export function GravePile({
   grave,
@@ -12,6 +13,7 @@ export function GravePile({
   disabled?: boolean
   onClick?: () => void
 }) {
+  const t = useT()
   const canOpen = !disabled && grave.length > 0 && onClick
 
   return (
@@ -25,7 +27,7 @@ export function GravePile({
         .join(' ')}
       onClick={canOpen ? onClick : undefined}
       disabled={!canOpen}
-      aria-label={grave.length > 0 ? `Кладбище: ${grave.length} карт` : 'Кладбище пусто'}
+      aria-label={grave.length > 0 ? t.match.ariaGrave(grave.length) : t.match.ariaGraveEmpty}
     >
       <div className="match-grave-pile-stack">
         {grave.map((cardIndex, index) => {

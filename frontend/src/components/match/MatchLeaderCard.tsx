@@ -1,5 +1,6 @@
 import type { CardDefinition } from '../../api/cards'
 import { cardSmallImageUrl } from '../../utils/cardAssets'
+import { translateCardName, useLanguage } from '../../i18n'
 import { CardPreview } from './CardPreview'
 
 export function MatchLeaderCard({
@@ -17,6 +18,7 @@ export function MatchLeaderCard({
   canUse: boolean
   onClick?: () => void
 }) {
+  const language = useLanguage()
   const bgImage = leaderCard
     ? `url('${cardSmallImageUrl(leaderCard)}')`
     : undefined
@@ -37,7 +39,7 @@ export function MatchLeaderCard({
       role={canUse ? 'button' : undefined}
       tabIndex={canUse ? 0 : undefined}
       onKeyDown={canUse ? (e) => e.key === 'Enter' && onClick?.() : undefined}
-      title={leaderCard?.name}
+      title={leaderCard ? translateCardName(leaderCard.name, language) : undefined}
     >
       <div className="match-leader-container">
         <div

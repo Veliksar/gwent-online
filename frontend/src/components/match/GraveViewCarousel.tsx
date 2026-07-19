@@ -1,17 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import { cardAbilityIconUrl, cardLargeImageUrl } from '../../utils/cardAssets'
+import { translateAbilityDescription, translateAbilityName, translateCardName, useLanguage, useT } from '../../i18n'
+import type { Language } from '../../stores/settingsStore'
 
-function abilityTitle(card: CardDefinition | undefined): string {
+function abilityTitle(card: CardDefinition | undefined, language: Language): string {
   const ability = card?.abilities.find((item) => item !== 'hero')
   if (!ability) return ''
-  return card?.ability_descriptions[ability]?.name ?? ability
+  return translateAbilityName(ability, card?.ability_descriptions[ability]?.name ?? ability, language)
 }
 
-function abilityDescription(card: CardDefinition | undefined): string {
+function abilityDescription(card: CardDefinition | undefined, language: Language): string {
   const ability = card?.abilities.find((item) => item !== 'hero')
-  if (!ability) return card?.name ?? ''
-  return card?.ability_descriptions[ability]?.description ?? card?.name ?? ''
+  if (!ability) return card ? translateCardName(card.name, language) : ''
+  const fallback = card?.ability_descriptions[ability]?.description
+  if (fallback) return translateAbilityDescription(ability, fallback, language)
+  return card ? translateCardName(card.name, language) : ''
 }
 
 function abilityIcon(card: CardDefinition | undefined): string | null {
@@ -34,6 +38,8 @@ export function GraveViewCarousel({
   onClose: () => void
 }) {
   const [center, setCenter] = useState(Math.max(0, grave.length - 1))
+  const t = useT()
+  const language = useLanguage()
 
   // Сбрасываем выбор только при реальном изменении содержимого кладбища:
   // сам массив пересоздаётся при каждом обновлении матча (poll/Echo)
@@ -88,16 +94,16 @@ export function GraveViewCarousel({
 
       <div className="card-description grave-carousel-description">
         {icon && <div style={{ backgroundImage: `url("${cardAbilityIconUrl(icon)}")` }} />}
-        <h1>{currentCard?.name ?? 'Карта'}</h1>
+        <h1>{currentCard ? translateCardName(currentCard.name, language) : t.match.cardFallback}</h1>
         <p>
-          {abilityTitle(currentCard)
-            ? `${abilityTitle(currentCard)}: ${abilityDescription(currentCard)}`
-            : abilityDescription(currentCard)}
+          {abilityTitle(currentCard, language)
+            ? `${abilityTitle(currentCard, language)}: ${abilityDescription(currentCard, language)}`
+            : abilityDescription(currentCard, language)}
         </p>
       </div>
 
       <div className="grave-carousel-title">
-        {ownerLabel} - кладбище ({center + 1}/{grave.length})
+        {t.match.graveTitle(ownerLabel, center + 1, grave.length)}
       </div>
     </div>
   )

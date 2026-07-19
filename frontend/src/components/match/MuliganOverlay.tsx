@@ -1,6 +1,7 @@
 import type { CardDefinition } from '../../api/cards'
 import type { MatchPlayer } from '../../api/match'
 import { GwentCard } from './GwentCard'
+import { useT } from '../../i18n'
 
 export function MuliganOverlay({
   player,
@@ -17,14 +18,16 @@ export function MuliganOverlay({
   onSwap: (handPos: number) => void
   onSkip: () => void
 }) {
+  const t = useT()
+
   return (
     <div className="match-muligan-overlay">
-      <div className="match-muligan-title">Замена карт</div>
+      <div className="match-muligan-title">{t.match.muliganTitle}</div>
       <div className="match-muligan-hint">
-        Выберите карту для замены на случайную из колоды
+        {t.match.muliganHint}
       </div>
       <div className="match-muligan-remaining">
-        Осталось замен: <strong>{remaining}</strong>
+        {t.match.muliganRemaining} <strong>{remaining}</strong>
       </div>
 
       <div className="match-muligan-hand">
@@ -49,7 +52,7 @@ export function MuliganOverlay({
           onClick={onSkip}
           disabled={pending}
         >
-          {pending ? '...' : 'Пропустить'}
+          {pending ? '...' : t.match.muliganSkip}
         </button>
       </div>
     </div>

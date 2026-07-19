@@ -1,13 +1,6 @@
 import type { MatchPlayer } from '../../api/match'
 import { deckShieldImageUrl } from '../../utils/cardAssets'
-
-const FACTION_NAMES: Record<string, string> = {
-  realms: 'Северные королевства',
-  nilfgaard: 'Нильфгаард',
-  monsters: 'Чудовища',
-  scoiatael: "Скоя'таэли",
-  skellige: 'Скеллиге',
-}
+import { useT } from '../../i18n'
 
 export function MatchStatsPanel({
   player,
@@ -18,6 +11,7 @@ export function MatchStatsPanel({
   side: 'me' | 'op'
   isCurrentTurn: boolean
 }) {
+  const t = useT()
   const scoreClass =
     side === 'me' ? 'match-score-total match-score-total-me' : 'match-score-total match-score-total-op'
 
@@ -33,7 +27,7 @@ export function MatchStatsPanel({
 
       <div className={`match-name match-name-${side}`}>{player.nickname}</div>
       <div className={`match-deck-name match-deck-name-${side}`}>
-        {FACTION_NAMES[player.deck_faction] ?? player.deck_faction}
+        {t.factions[player.deck_faction] ?? player.deck_faction}
       </div>
 
       <div className={`match-hand-count match-hand-count-${side}`}>{player.hand_count}</div>
@@ -61,7 +55,7 @@ export function MatchStatsPanel({
         <div>{player.round_score}</div>
       </div>
 
-      {player.passed && <div className={`match-passed match-passed-${side}`}>Passed</div>}
+      {player.passed && <div className={`match-passed match-passed-${side}`}>{t.match.passed}</div>}
     </section>
   )
 }

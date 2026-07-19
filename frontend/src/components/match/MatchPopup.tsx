@@ -1,5 +1,6 @@
 import type { CardDefinition } from '../../api/cards'
 import { cardLargeImageUrl } from '../../utils/cardAssets'
+import { useT } from '../../i18n'
 
 export function ScoiaFirstChoicePopup({
   pending,
@@ -8,14 +9,16 @@ export function ScoiaFirstChoicePopup({
   pending: boolean
   onChoose: (preferFirst: boolean) => void
 }) {
+  const t = useT()
+
   return (
     <div className="match-popup" role="dialog" aria-modal="true">
       <div className="match-popup-card">
-        <h2>Скоя'таэли выбирают первый ход</h2>
-        <p>Выберите, начинать ли первый раунд.</p>
+        <h2>{t.match.scoiaChoiceTitle}</h2>
+        <p>{t.match.scoiaChoiceText}</p>
         <div className="match-popup-actions">
-          <button type="button" disabled={pending} onClick={() => onChoose(true)}>Ходить первым</button>
-          <button type="button" disabled={pending} onClick={() => onChoose(false)}>Ходить вторым</button>
+          <button type="button" disabled={pending} onClick={() => onChoose(true)}>{t.match.goFirst}</button>
+          <button type="button" disabled={pending} onClick={() => onChoose(false)}>{t.match.goSecond}</button>
         </div>
       </div>
     </div>
@@ -31,10 +34,12 @@ export function RevealCardsPopup({
   cardsByIndex: Map<number, CardDefinition>
   onClose: () => void
 }) {
+  const t = useT()
+
   return (
     <div className="match-popup" role="dialog" aria-modal="true">
       <div className="match-popup-card match-popup-card-wide">
-        <h2>Карты соперника</h2>
+        <h2>{t.match.revealTitle}</h2>
         <div className="match-reveal-cards">
           {cards.map((index, pos) => {
             const card = cardsByIndex.get(index)
@@ -50,7 +55,7 @@ export function RevealCardsPopup({
           })}
         </div>
         <div className="match-popup-actions">
-          <button type="button" onClick={onClose}>Закрыть</button>
+          <button type="button" onClick={onClose}>{t.common.close}</button>
         </div>
       </div>
     </div>

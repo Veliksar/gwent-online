@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { lobbyApi, FACTIONS, FACTION_LEADERS, FACTION_DEFAULT_DECKS, type LobbyRoom } from '../api/lobby'
+import { useT } from '../i18n'
 
 interface Props {
   onSaved?: (room?: LobbyRoom) => void
@@ -10,6 +11,7 @@ export default function DeckSelector({ onSaved }: Props) {
   const [selectedFaction, setSelectedFaction] = useState<string>('realms')
   const [selectedLeader, setSelectedLeader] = useState<number>(FACTION_LEADERS['realms'][0].index)
   const [saved, setSaved] = useState(false)
+  const t = useT()
 
   const saveMutation = useMutation({
     mutationFn: () => {
@@ -39,10 +41,10 @@ export default function DeckSelector({ onSaved }: Props) {
 
   return (
     <div className="border border-gwent-border rounded p-4 bg-gwent-card">
-      <h3 className="text-sm font-bold text-gwent-gold mb-3">Выбор колоды</h3>
+      <h3 className="text-sm font-bold text-gwent-gold mb-3">{t.deck.title}</h3>
 
       <div className="mb-3">
-        <div className="text-xs text-gray-400 mb-2">Фракция</div>
+        <div className="text-xs text-gray-400 mb-2">{t.deck.faction}</div>
         <div className="grid grid-cols-2 gap-2">
           {FACTIONS.map((f) => (
             <button
@@ -54,14 +56,14 @@ export default function DeckSelector({ onSaved }: Props) {
                   : 'border-gwent-border bg-gwent-dark text-gray-300 hover:border-gray-500'
               }`}
             >
-              {f.name}
+              {t.factions[f.id] ?? f.name}
             </button>
           ))}
         </div>
       </div>
 
       <div className="mb-4">
-        <div className="text-xs text-gray-400 mb-2">Лидер</div>
+        <div className="text-xs text-gray-400 mb-2">{t.deck.leader}</div>
         <div className="space-y-1">
           {leaders.map((l) => (
             <label key={l.index} className="flex items-center gap-2 cursor-pointer group">
@@ -74,7 +76,7 @@ export default function DeckSelector({ onSaved }: Props) {
                 className="accent-gwent-gold"
               />
               <span className={`text-xs ${selectedLeader === l.index ? 'text-gwent-gold' : 'text-gray-300 group-hover:text-white'}`}>
-                {l.name}
+                {t.leaders[l.index] ?? l.name}
               </span>
             </label>
           ))}
@@ -82,7 +84,7 @@ export default function DeckSelector({ onSaved }: Props) {
       </div>
 
       <div className="text-xs text-gray-500 mb-3">
-        Используется стандартная колода для выбранной фракции
+        {t.deck.defaultDeckNote}
       </div>
 
       <button
@@ -94,11 +96,11 @@ export default function DeckSelector({ onSaved }: Props) {
             : 'btn-gold'
         }`}
       >
-        {saveMutation.isPending ? 'Сохранение...' : saved ? 'Колода сохранена' : 'Выбрать колоду'}
+        {saveMutation.isPending ? t.deck.saving : saved ? t.deck.saved : t.deck.save}
       </button>
 
       {saveMutation.isError && (
-        <div className="text-xs text-red-400 mt-2">Ошибка сохранения колоды</div>
+        <div className="text-xs text-red-400 mt-2">{t.deck.saveError}</div>
       )}
     </div>
   )

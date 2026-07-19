@@ -8,9 +8,11 @@ import { useMatchStore } from '../stores/matchStore'
 import { useAuthStore } from '../stores/authStore'
 import DeckSelector from '../components/DeckSelector'
 import { getEcho } from '../services/echo'
+import { useT } from '../i18n'
 
 export default function LobbyPage() {
   const navigate = useNavigate()
+  const t = useT()
   const { user } = useAuthStore()
   const { room, roomCode, setRoom, clearLobby } = useLobbyStore()
   const { setMatch } = useMatchStore()
@@ -38,13 +40,13 @@ export default function LobbyPage() {
       }
       prevRoomStatusRef.current = null
       clearLobby()
-      setError('Матч не найден или уже завершён')
+      setError(t.lobby.errMatchNotFound)
     } catch {
-      setError('Не удалось загрузить матч')
+      setError(t.lobby.errLoadMatch)
     } finally {
       navigatingRef.current = false
     }
-  }, [setMatch, navigate, clearLobby])
+  }, [setMatch, navigate, clearLobby, t])
 
   const { refetch: checkCurrentLobby } = useQuery({
     queryKey: ['currentLobby'],
@@ -166,7 +168,7 @@ export default function LobbyPage() {
       setRoom(data.room)
       setError('')
     },
-    onError: (err) => setError(getErrorMessage(err, 'Не удалось найти игру')),
+    onError: (err) => setError(getErrorMessage(err, t.lobby.errFindGame)),
   })
 
   const joinByCodeMutation = useMutation({
@@ -181,7 +183,7 @@ export default function LobbyPage() {
       setRoom(data.room)
       setError('')
     },
-    onError: (err) => setError(getErrorMessage(err, 'Неверный код комнаты')),
+    onError: (err) => setError(getErrorMessage(err, t.lobby.errInvalidCode)),
   })
 
   const createMutation = useMutation({
@@ -196,7 +198,7 @@ export default function LobbyPage() {
       setRoom(data.room, data.room_code)
       setError('')
     },
-    onError: (err) => setError(getErrorMessage(err, 'Не удалось создать комнату')),
+    onError: (err) => setError(getErrorMessage(err, t.lobby.errCreateRoom)),
   })
 
   const leaveMutation = useMutation({
@@ -208,7 +210,7 @@ export default function LobbyPage() {
       clearLobby()
       setError('')
     },
-    onError: (err) => setError(getErrorMessage(err, 'Не удалось покинуть лобби')),
+    onError: (err) => setError(getErrorMessage(err, t.lobby.errLeave)),
   })
 
   const readyMutation = useMutation({
@@ -226,7 +228,7 @@ export default function LobbyPage() {
     },
     onError: () => {
       autoStartAttemptedRef.current = false
-      setError('Не удалось начать матч')
+      setError(t.lobby.errStart)
     },
   })
 
@@ -255,9 +257,9 @@ export default function LobbyPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="panel max-w-md w-full">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gwent-gold">Онлайн игра</h1>
+            <h1 className="text-2xl font-bold text-gwent-gold">{t.lobby.title}</h1>
             <Link to="/" className="btn-secondary text-sm">
-              Назад
+              {t.common.back}
             </Link>
           </div>
 
@@ -273,7 +275,7 @@ export default function LobbyPage() {
               className="btn-gold w-full py-4"
               disabled={joinMutation.isPending}
             >
-              {joinMutation.isPending ? 'Поиск...' : 'Найти игру'}
+              {joinMutation.isPending ? t.lobby.searching : t.lobby.findGame}
             </button>
 
             <div className="relative">
@@ -281,7 +283,7 @@ export default function LobbyPage() {
                 <div className="w-full border-t border-gwent-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gwent-dark text-gray-400">или</span>
+                <span className="px-2 bg-gwent-dark text-gray-400">{t.common.or}</span>
               </div>
             </div>
 
@@ -290,7 +292,7 @@ export default function LobbyPage() {
               className="btn-secondary w-full py-3"
               disabled={createMutation.isPending}
             >
-              {createMutation.isPending ? 'Создание...' : 'Создать приватную комнату'}
+              {createMutation.isPending ? t.lobby.creating : t.lobby.createRoom}
             </button>
 
             <div className="relative">
@@ -298,7 +300,7 @@ export default function LobbyPage() {
                 <div className="w-full border-t border-gwent-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gwent-dark text-gray-400">или войти по код</span>
+                <span className="px-2 bg-gwent-dark text-gray-400">{t.lobby.joinByCode}</span>
               </div>
             </div>
 
@@ -316,7 +318,7 @@ export default function LobbyPage() {
                 className="btn-secondary px-6"
                 disabled={joinCode.length !== 6 || joinByCodeMutation.isPending}
               >
-                Войти
+                {t.lobby.join}
               </button>
             </div>
           </div>
@@ -329,9 +331,9 @@ export default function LobbyPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="panel max-w-md w-full text-center">
-          <h1 className="text-2xl font-bold text-gwent-gold mb-4">Незавершённый матч</h1>
+          <h1 className="text-2xl font-bold text-gwent-gold mb-4">{t.lobby.unfinishedTitle}</h1>
           <p className="text-gray-400 text-sm mb-6">
-            В базе сохранена предыдущая игра. Продолжите с того же места или покиньте матч, чтобы начать заново.
+            {t.lobby.unfinishedText}
           </p>
 
           <div className="space-y-3">
@@ -339,17 +341,17 @@ export default function LobbyPage() {
               onClick={() => navigateToMatch()}
               className="btn-gold w-full py-4"
             >
-              Продолжить матч
+              {t.lobby.continueMatch}
             </button>
             <button
               onClick={() => leaveMutation.mutate()}
               className="btn-secondary w-full py-3"
               disabled={leaveMutation.isPending}
             >
-              {leaveMutation.isPending ? 'Выход...' : 'Покинуть матч'}
+              {leaveMutation.isPending ? t.lobby.leaving : t.lobby.leaveMatch}
             </button>
             <Link to="/" className="btn-secondary w-full py-3 block">
-              В главное меню
+              {t.lobby.toMainMenu}
             </Link>
           </div>
 
@@ -367,26 +369,26 @@ export default function LobbyPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="panel max-w-lg w-full">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gwent-gold">Лобби</h1>
+          <h1 className="text-2xl font-bold text-gwent-gold">{t.lobby.lobbyTitle}</h1>
           <button
             onClick={() => leaveMutation.mutate()}
             className="btn-secondary text-sm"
             disabled={leaveMutation.isPending}
           >
-            Покинуть
+            {t.lobby.leave}
           </button>
         </div>
 
         {roomCode && (
           <div className="bg-gwent-card border border-gwent-border rounded p-4 mb-6 text-center">
-            <div className="text-sm text-gray-400 mb-1">Код комнаты</div>
+            <div className="text-sm text-gray-400 mb-1">{t.lobby.roomCode}</div>
             <div className="text-3xl font-bold text-gwent-gold tracking-widest">{roomCode}</div>
-            <div className="text-xs text-gray-500 mt-1">Поделитесь этим кодом с другом</div>
+            <div className="text-xs text-gray-500 mt-1">{t.lobby.shareCode}</div>
           </div>
         )}
 
         <div className="space-y-3 mb-6">
-          <div className="text-sm text-gray-400 mb-2">Игроки ({room.members.length}/2)</div>
+          <div className="text-sm text-gray-400 mb-2">{t.lobby.players} ({room.members.length}/2)</div>
           {room.members.map((member) => (
             <div
               key={member.user_id}
@@ -405,11 +407,11 @@ export default function LobbyPage() {
                   <div className="text-xs text-gray-400">
                     {member.user_id === user?.id
                       ? isHost
-                        ? 'Вы · Хост'
-                        : 'Вы'
+                        ? t.lobby.youHost
+                        : t.lobby.you
                       : member.user_id === room.host_user_id
-                        ? 'Хост'
-                        : 'Соперник'}
+                        ? t.lobby.host
+                        : t.lobby.opponent}
                   </div>
                 </div>
               </div>
@@ -418,14 +420,14 @@ export default function LobbyPage() {
                   member.ready ? 'text-green-400' : 'text-gray-400'
                 }`}
               >
-                {member.ready ? 'Готов' : 'Ожидание...'}
+                {member.ready ? t.lobby.ready : t.lobby.waiting}
               </div>
             </div>
           ))}
 
           {room.members.length < 2 && (
             <div className="flex items-center justify-center p-3 rounded border border-dashed border-gwent-border text-gray-500">
-              Ожидание соперника...
+              {t.lobby.waitingOpponent}
             </div>
           )}
         </div>
@@ -447,24 +449,24 @@ export default function LobbyPage() {
             onClick={() => readyMutation.mutate(!isUserReady)}
             className={isUserReady ? 'btn-secondary w-full py-3' : 'btn-gold w-full py-3'}
             disabled={readyMutation.isPending || !hasDeck}
-            title={!hasDeck ? 'Сначала выберите колоду' : undefined}
+            title={!hasDeck ? t.lobby.chooseDeckFirst : undefined}
           >
-            {isUserReady ? 'Отменить готовность' : hasDeck ? 'Готов' : 'Выберите колоду'}
+            {isUserReady ? t.lobby.cancelReady : hasDeck ? t.lobby.ready : t.lobby.chooseDeckButton}
           </button>
 
           {allReady && isHost && (
             <div className="text-center py-3 text-gwent-gold">
-              {startMutation.isPending ? 'Запуск матча...' : 'Оба игрока готовы - матч запускается автоматически'}
+              {startMutation.isPending ? t.lobby.autoStarting : t.lobby.bothReady}
             </div>
           )}
 
           {allReady && !isHost && (
             <div className="text-center py-3">
               <p className="text-sm text-gray-300 animate-pulse">
-                Ожидайте начала матча{hostNickname ? ` от ${hostNickname}` : ''}...
+                {t.lobby.waitHostPrefix}{hostNickname ? t.lobby.waitHostFrom(hostNickname) : ''}...
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Переход в игру произойдёт автоматически
+                {t.lobby.autoTransition}
               </p>
             </div>
           )}
@@ -478,7 +480,7 @@ export default function LobbyPage() {
               className="btn-gold w-full py-4 text-lg"
               disabled={startMutation.isPending}
             >
-              {startMutation.isPending ? 'Запуск...' : 'Начать матч'}
+              {startMutation.isPending ? t.lobby.starting : t.lobby.startMatch}
             </button>
           )}
         </div>

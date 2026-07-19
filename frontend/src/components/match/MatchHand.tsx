@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import type { MatchPlayer } from '../../api/match'
 import { iconUrl } from '../../utils/cardAssets'
+import { useT } from '../../i18n'
 import { GwentCard } from './GwentCard'
 import { GwentCardBack } from './GwentCardBack'
 
@@ -52,9 +53,11 @@ export function OpponentHand({
   revealedCards?: (number | null)[]
   cardsByIndex?: Map<number, CardDefinition>
 }) {
+  const t = useT()
+
   if (revealedCards && cardsByIndex) {
     return (
-      <div className="match-opponent-hand match-opponent-hand-revealed" aria-label="Рука бота (debug)">
+      <div className="match-opponent-hand match-opponent-hand-revealed" aria-label={t.match.ariaBotHand}>
         {revealedCards.map((cardIndex, index) => {
           const card = cardIndex !== null ? cardsByIndex.get(cardIndex) : undefined
           if (card) {
@@ -67,7 +70,7 @@ export function OpponentHand({
   }
 
   return (
-    <div className="match-opponent-hand" aria-label={`Карт у соперника: ${count}`}>
+    <div className="match-opponent-hand" aria-label={t.match.ariaOpponentCards(count)}>
       {Array.from({ length: count }).map((_, index) => (
         <GwentCardBack key={index} faction={faction} />
       ))}

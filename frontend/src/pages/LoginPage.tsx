@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '../api/auth'
 import { useAuthStore } from '../stores/authStore'
+import { useT } from '../i18n'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const setAuth = useAuthStore((state) => state.setAuth)
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const t = useT()
 
   const loginMutation = useMutation({
     mutationFn: authApi.login,
@@ -20,9 +22,9 @@ export default function LoginPage() {
       const errors = err.response?.data?.errors
       if (errors) {
         const firstError = Object.values(errors)[0]?.[0]
-        setError(firstError || 'Ошибка входа')
+        setError(firstError || t.login.error)
       } else {
-        setError(err.response?.data?.message || 'Ошибка входа')
+        setError(err.response?.data?.message || t.login.error)
       }
     },
   })
@@ -38,7 +40,7 @@ export default function LoginPage() {
       <div className="panel max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gwent-gold mb-2">Gwent Classic</h1>
-          <p className="text-gray-400">Войдите в свой аккаунт</p>
+          <p className="text-gray-400">{t.login.subtitle}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -49,7 +51,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.login.email}</label>
             <input
               type="email"
               className="input-field"
@@ -60,7 +62,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Пароль</label>
+            <label className="block text-sm text-gray-400 mb-1">{t.login.password}</label>
             <input
               type="password"
               className="input-field"
@@ -75,14 +77,14 @@ export default function LoginPage() {
             className="btn-gold w-full"
             disabled={loginMutation.isPending}
           >
-            {loginMutation.isPending ? 'Вход...' : 'Войти'}
+            {loginMutation.isPending ? t.login.submitting : t.login.submit}
           </button>
         </form>
 
         <p className="text-center mt-6 text-gray-400">
-          Нет аккаунта?{' '}
+          {t.login.noAccount}{' '}
           <Link to="/register" className="text-gwent-gold hover:underline">
-            Зарегистрироваться
+            {t.login.registerLink}
           </Link>
         </p>
       </div>
