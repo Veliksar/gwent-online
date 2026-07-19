@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import type { BoardDisplayCard, GameMatch, MatchPlayer } from '../../api/match'
+import { horizontalWheelScroll } from '../../utils/carouselControls'
 import { GwentCard } from './GwentCard'
 
 type RowKey = 'close' | 'ranged' | 'siege'
@@ -121,7 +122,11 @@ function MatchRow({
           </div>
         )}
       </div>
-      <div className="match-row-cards" data-flyzone={`row_${ownerKey}_${row}`}>
+      <div
+        className="match-row-cards"
+        data-flyzone={`row_${ownerKey}_${row}`}
+        onWheel={horizontalWheelScroll}
+      >
         {cards.map((boardCard, index) => {
           const card = cardsByIndex.get(boardCard.index)
           const selectable = canSelectBoardCard && card && !card.abilities.includes('hero')

@@ -1,6 +1,7 @@
 import type { CardDefinition } from '../../api/cards'
 import type { MatchPlayer } from '../../api/match'
 import { iconUrl } from '../../utils/cardAssets'
+import { horizontalWheelScroll } from '../../utils/carouselControls'
 import { useT } from '../../i18n'
 import { GwentCard } from './GwentCard'
 import { GwentCardBack } from './GwentCardBack'
@@ -132,7 +133,7 @@ export function MatchHand({
 }) {
   return (
     <section className="match-hand-panel">
-      <div className="match-hand-row" data-flyzone="hand_me">
+      <div className="match-hand-row" data-flyzone="hand_me" onWheel={horizontalWheelScroll}>
         {player.hand.map((cardIndex, index) => {
           const hidden = arrivingHand.has(index)
           return (

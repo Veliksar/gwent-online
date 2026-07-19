@@ -5,7 +5,9 @@ import { cardsApi, type CardDefinition } from '../api/cards'
 import { decksApi, type UserDeck } from '../api/decks'
 import { lobbyApi, FACTIONS, FACTION_DEFAULT_DECKS } from '../api/lobby'
 import { cardLargeImageUrl, deckShieldImageUrl } from '../utils/cardAssets'
-import { useT, useLanguage, translateCardName } from '../i18n'
+import { useCarouselKeys, useWheelStep } from '../utils/carouselControls'
+import { useT, useLanguage, translateAbilityDescription, translateCardName } from '../i18n'
+import type { Language } from '../stores/settingsStore'
 import '../styles/deck-builder.css'
 
 // Канон DeckMaker: минимум 22 юнита, максимум 10 спецкарт
@@ -19,6 +21,19 @@ interface CarouselItem {
   description?: string
 }
 
+// Способность лидера для подписи в карусели (у лидера ровно одна способность)
+function leaderAbilityText(card: CardDefinition, language: Language): string {
+  const ability = card.abilities[0]
+  const info = ability ? card.ability_descriptions[ability] : undefined
+  if (!ability || !info) return ''
+  return translateAbilityDescription(ability, info.description, language)
+}
+
+/**
+ * Карусель по канону легаси Carousel: клик по боковой карте (или колесо,
+ * стрелки) листает подсветку, клик по центральной (или Enter) подтверждает.
+ * Подпись показывает имя и описание просматриваемого варианта.
+ */
 function DbCarousel({
   title,
   items,
@@ -32,7 +47,22 @@ function DbCarousel({
   onPick: (key: string) => void
   onClose: () => void
 }) {
-  const current = items.find((item) => item.key === currentKey)
+  const [browsedKey, setBrowsedKey] = useState(currentKey)
+  const browsed = items.find((item) => item.key === browsedKey) ?? items[0]
+
+  const browsedIndex = items.findIndex((item) => item.key === browsed?.key)
+  const step = (direction: 1 | -1) => {
+    const next = items[browsedIndex + direction]
+    if (next) setBrowsedKey(next.key)
+  }
+
+  useCarouselKeys({
+    onPrev: () => step(-1),
+    onNext: () => step(1),
+    onConfirm: () => browsed && onPick(browsed.key),
+    onClose,
+  })
+  const handleWheel = useWheelStep(step)
 
   return (
     <div
@@ -40,22 +70,29 @@ function DbCarousel({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
+      onWheel={handleWheel}
     >
       <div className="db-carousel-title">{title}</div>
       {items.map((item) => (
         <button
           key={item.key}
           type="button"
-          className={`db-carousel-item ${item.key === currentKey ? 'db-carousel-item-current' : ''}`}
+          className={`db-carousel-item ${item.key === browsed?.key ? 'db-carousel-item-current' : ''}`}
           style={{ backgroundImage: `url("${item.image}")` }}
-          onClick={() => onPick(item.key)}
+          onClick={() => {
+            if (item.key === browsed?.key) {
+              onPick(item.key)
+            } else {
+              setBrowsedKey(item.key)
+            }
+          }}
           aria-label={item.name}
         />
       ))}
-      {current && (
+      {browsed && (
         <div className="db-carousel-caption">
-          <h3>{current.name}</h3>
-          {current.description && <p>{current.description}</p>}
+          <h3>{browsed.name}</h3>
+          {browsed.description && <p>{browsed.description}</p>}
         </div>
       )}
     </div>
@@ -317,6 +354,7 @@ export default function DeckBuilderPage() {
           style={leaderCard ? { backgroundImage: `url("${cardLargeImageUrl(leaderCard)}")` } : undefined}
           onClick={() => setCarousel('leader')}
           aria-label={t.deckBuilder.chooseLeader}
+          title={leaderCard ? leaderAbilityText(leaderCard, language) : undefined}
         />
       </div>
 
@@ -391,6 +429,7 @@ export default function DeckBuilderPage() {
             key: String(leader.index),
             image: cardLargeImageUrl(leader),
             name: t.leaders[leader.index] ?? cardName(leader),
+            description: leaderAbilityText(leader, language),
           }))}
           currentKey={String(leaderId ?? '')}
           onPick={(key) => {

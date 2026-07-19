@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import { cardAbilityIconUrl, cardLargeImageUrl } from '../../utils/cardAssets'
+import { useCarouselKeys, useWheelStep } from '../../utils/carouselControls'
 import { translateAbilityDescription, translateAbilityName, translateCardName, useLanguage, useT } from '../../i18n'
 import type { Language } from '../../stores/settingsStore'
 
@@ -55,6 +56,17 @@ export function GraveViewCarousel({
   const slots = useMemo(() => [-2, -1, 0, 1, 2].map((offset) => center + offset), [center])
   const icon = abilityIcon(currentCard)
 
+  // Перебор колесом и стрелками, Escape/Enter — закрыть (пункт 7 UPDATES_PLAN)
+  const step = (direction: 1 | -1) =>
+    setCenter((prev) => Math.min(grave.length - 1, Math.max(0, prev + direction)))
+  useCarouselKeys({
+    onPrev: () => step(-1),
+    onNext: () => step(1),
+    onConfirm: onClose,
+    onClose,
+  })
+  const handleWheel = useWheelStep(step)
+
   if (grave.length === 0) return null
 
   return (
@@ -64,6 +76,7 @@ export function GraveViewCarousel({
       role="dialog"
       aria-modal="true"
       onClick={onClose}
+      onWheel={handleWheel}
     >
       <div className="grave-carousel-cards" onClick={(event) => event.stopPropagation()}>
         {slots.map((gravePos, slotIndex) => {
