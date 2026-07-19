@@ -780,6 +780,7 @@ class MatchController extends Controller
                 'scoiatael_first' => ($state['scoiatael_first_choice_user_id'] ?? null) !== null,
                 'emhyr_reveal' => ($state['leader_result']['type'] ?? null) === 'reveal_hand',
             ],
+            'faction_events'      => $state['faction_events'] ?? [],
             'started_at'          => $match->started_at,
             'turn_started_at'     => $match->turn_started_at,
             'turn_timeout_seconds'=> $this->matchFlow->turnTimeoutSeconds(),

@@ -6,6 +6,8 @@ interface LobbyMember {
   avatar_url: string | null
   ready: boolean
   has_deck: boolean
+  deck_faction: string | null
+  deck_leader_id: number | null
 }
 
 interface LobbyRoom {

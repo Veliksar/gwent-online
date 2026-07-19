@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import type { MatchPlayer } from '../../api/match'
 import { iconUrl } from '../../utils/cardAssets'
@@ -57,7 +56,11 @@ export function OpponentHand({
 
   if (revealedCards && cardsByIndex) {
     return (
-      <div className="match-opponent-hand match-opponent-hand-revealed" aria-label={t.match.ariaBotHand}>
+      <div
+        className="match-opponent-hand match-opponent-hand-revealed"
+        data-flyzone="hand_op"
+        aria-label={t.match.ariaBotHand}
+      >
         {revealedCards.map((cardIndex, index) => {
           const card = cardIndex !== null ? cardsByIndex.get(cardIndex) : undefined
           if (card) {
@@ -70,7 +73,7 @@ export function OpponentHand({
   }
 
   return (
-    <div className="match-opponent-hand" aria-label={t.match.ariaOpponentCards(count)}>
+    <div className="match-opponent-hand" data-flyzone="hand_op" aria-label={t.match.ariaOpponentCards(count)}>
       {Array.from({ length: count }).map((_, index) => (
         <GwentCardBack key={index} faction={faction} />
       ))}
@@ -118,53 +121,35 @@ export function MatchHand({
   player,
   cardsByIndex,
   selectedHandPos,
+  arrivingHand,
   onCardClick,
 }: {
   player: MatchPlayer
   cardsByIndex: Map<number, CardDefinition>
   selectedHandPos: number | null
+  arrivingHand: Set<number>
   onCardClick: (handPos: number, cardIndex: number) => void
 }) {
-  const prevHandRef = useRef<(number | null)[] | null>(null)
-  const [enteringPositions, setEnteringPositions] = useState<Set<number>>(new Set())
-
-  useEffect(() => {
-    if (prevHandRef.current === null) {
-      prevHandRef.current = [...player.hand]
-      return
-    }
-
-    const prevHand = prevHandRef.current
-    const entering = new Set<number>()
-
-    player.hand.forEach((cardIdx, pos) => {
-      if (cardIdx !== null && cardIdx !== prevHand[pos]) {
-        entering.add(pos)
-      }
-    })
-
-    prevHandRef.current = [...player.hand]
-
-    if (entering.size === 0) return
-
-    setEnteringPositions(entering)
-    const timer = setTimeout(() => setEnteringPositions(new Set()), 500)
-    return () => clearTimeout(timer)
-  }, [player.hand])
-
   return (
     <section className="match-hand-panel">
-      <div className="match-hand-row">
-        {player.hand.map((cardIndex, index) => (
-          <div key={index} className={enteringPositions.has(index) ? 'gwent-card-entering' : ''}>
-            <HandCard
-              index={cardIndex}
-              card={cardIndex !== null ? cardsByIndex.get(cardIndex) : undefined}
-              selected={selectedHandPos === index}
-              onClick={() => cardIndex !== null && onCardClick(index, cardIndex)}
-            />
-          </div>
-        ))}
+      <div className="match-hand-row" data-flyzone="hand_me">
+        {player.hand.map((cardIndex, index) => {
+          const hidden = arrivingHand.has(index)
+          return (
+            <div
+              key={index}
+              className={hidden ? 'gwent-card-hidden-arrival' : undefined}
+              data-hand-arriving={hidden ? index : undefined}
+            >
+              <HandCard
+                index={cardIndex}
+                card={cardIndex !== null ? cardsByIndex.get(cardIndex) : undefined}
+                selected={selectedHandPos === index}
+                onClick={() => cardIndex !== null && onCardClick(index, cardIndex)}
+              />
+            </div>
+          )
+        })}
       </div>
     </section>
   )

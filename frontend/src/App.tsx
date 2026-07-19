@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage'
 import LobbyPage from './pages/LobbyPage'
 import MatchPage from './pages/MatchPage'
 import MainMenu from './pages/MainMenu'
+import DeckBuilderPage from './pages/DeckBuilderPage'
 import DeveloperModePage from './pages/DeveloperModePage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/developer" element={<PrivateRoute><DeveloperModePage /></PrivateRoute>} />
         <Route path="/profile"  element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
         <Route path="/lobby"    element={<PrivateRoute><LobbyPage /></PrivateRoute>} />
+        <Route path="/deck"     element={<PrivateRoute><DeckBuilderPage /></PrivateRoute>} />
         <Route path="/match"    element={<PrivateRoute><MatchPage /></PrivateRoute>} />
         <Route path="*"         element={<Navigate to="/" replace />} />
       </Routes>

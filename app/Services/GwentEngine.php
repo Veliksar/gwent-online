@@ -270,7 +270,8 @@ class GwentEngine
         $state['first_player_id'] = $preferFirst ? $chooserUserId : $opponentId;
         $state['scoiatael_first_choice_user_id'] = null;
 
-        return $state;
+        // Уведомление сопернику: Скоя'таэли решили, кто ходит первым
+        return self::pushFactionEvent($state, $chooserUserId, 'scoiatael');
     }
 
     public static function startingPlayerForCurrentRound(array $state, array $playerIds): int
@@ -345,9 +346,23 @@ class GwentEngine
         );
     }
 
+    /**
+     * Фракционное срабатывание для уведомлений клиента (канон: factions.js -> ui.notification).
+     * seq монотонно растёт весь матч — клиент показывает только новые события.
+     */
+    private static function pushFactionEvent(array $state, int $userId, string $faction): array
+    {
+        $seq = (int) ($state['faction_event_seq'] ?? 0) + 1;
+        $state['faction_event_seq'] = $seq;
+        $state['faction_events'][] = ['seq' => $seq, 'user_id' => $userId, 'faction' => $faction];
+
+        return $state;
+    }
+
     public static function endRound(array $state, array $playerIds): array
     {
         $scores = self::calculateScores($state);
+        $state['faction_events'] = [];
 
         $p1 = $playerIds[0];
         $p2 = $playerIds[1];
@@ -381,6 +396,15 @@ class GwentEngine
         ];
 
         $persisting = self::pickMonstersPersistingCards($state, $playerIds);
+
+        $monstersNotified = [];
+        foreach (array_keys($persisting) as $key) {
+            $uid = (int) explode('_', (string) $key)[0];
+            if (!in_array($uid, $monstersNotified, true)) {
+                $monstersNotified[] = $uid;
+                $state = self::pushFactionEvent($state, $uid, 'monsters');
+            }
+        }
 
         foreach ($playerIds as $uid) {
             $player = $state['players'][$uid];
@@ -974,7 +998,7 @@ class GwentEngine
                     ? $chooserId
                     : self::opponentId($playerIds, $chooserId);
                 $state['scoiatael_first_choice_user_id'] = null;
-                return $state;
+                return self::pushFactionEvent($state, $chooserId, 'scoiatael');
             }
         }
 
@@ -995,6 +1019,7 @@ class GwentEngine
 
             if ($faction === 'realms' && $lastWinnerId === $uid && !empty($state['players'][$uid]['deck'])) {
                 $state['players'][$uid]['hand'][] = array_shift($state['players'][$uid]['deck']);
+                $state = self::pushFactionEvent($state, (int) $uid, 'realms');
             }
 
             if ($faction === 'skellige' && (int) ($state['round'] ?? 1) === 3) {
@@ -1045,6 +1070,10 @@ class GwentEngine
 
         $positions = self::pickRandomValues($positions, 2);
         rsort($positions);
+
+        if ($positions !== []) {
+            $state = self::pushFactionEvent($state, $userId, 'skellige');
+        }
 
         foreach ($positions as $pos) {
             $ci = $state['players'][$userId]['grave'][$pos];

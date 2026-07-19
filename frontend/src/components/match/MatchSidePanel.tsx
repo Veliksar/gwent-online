@@ -49,7 +49,7 @@ export function MatchSidePanel({
 }) {
   return (
     <aside className="match-panel-right">
-      <div className="match-grave-op">
+      <div className="match-grave-op" data-flyzone="grave_op">
         <GravePile
           grave={opponent.grave}
           cardsByIndex={cardsByIndex}
@@ -57,10 +57,10 @@ export function MatchSidePanel({
           onClick={() => onViewGrave('op')}
         />
       </div>
-      <div className="match-deck-op">
+      <div className="match-deck-op" data-flyzone="deck_op">
         <DeckPile count={opponent.deck_count} faction={opponent.deck_faction} stackStepPx={1} />
       </div>
-      <div className="match-grave-me">
+      <div className="match-grave-me" data-flyzone="grave_me">
         <GravePile
           grave={me.grave}
           cardsByIndex={cardsByIndex}
@@ -68,7 +68,7 @@ export function MatchSidePanel({
           onClick={() => onViewGrave('me')}
         />
       </div>
-      <div className="match-deck-me">
+      <div className="match-deck-me" data-flyzone="deck_me">
         <DeckPile count={me.deck_count} faction={me.deck_faction} stackStepPx={2} />
       </div>
     </aside>

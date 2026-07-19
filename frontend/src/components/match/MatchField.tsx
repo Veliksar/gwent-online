@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import type { CardDefinition } from '../../api/cards'
 import type { BoardDisplayCard, GameMatch, MatchPlayer } from '../../api/match'
 import { GwentCard } from './GwentCard'
@@ -30,6 +31,7 @@ function MatchRow({
   canSelectBoardCard,
   animatingCards,
   ghostCards,
+  arrivingBoard,
   onRowClick,
   onBoardCardClick,
 }: {
@@ -42,6 +44,7 @@ function MatchRow({
   canSelectBoardCard: boolean
   animatingCards: Map<string, string>
   ghostCards: GhostCard[]
+  arrivingBoard: Map<string, number>
   onRowClick?: () => void
   onBoardCardClick?: (row: RowKey, cardIndex: number) => void
 }) {
@@ -75,7 +78,35 @@ function MatchRow({
       ? cardsByIndex.get(202)
       : undefined
 
+  // Плавное появление спецкарты при установке в слот
+  const prevSpecialRef = useRef(!!specialCard)
+  const [specialEntering, setSpecialEntering] = useState(false)
+  useEffect(() => {
+    const had = prevSpecialRef.current
+    prevSpecialRef.current = !!specialCard
+    if (!had && specialCard) {
+      setSpecialEntering(true)
+      const timer = setTimeout(() => setSpecialEntering(false), 450)
+      return () => clearTimeout(timer)
+    }
+  }, [specialCard])
+
   const weatherOverlay: Record<RowKey, string> = { close: 'frost', ranged: 'fog', siege: 'rain' }
+
+  // Последние N экземпляров карты с прибывающим индексом скрыты — их «везёт» FlightLayer
+  const hiddenSlots = new Set<number>()
+  arrivingBoard.forEach((count, arrivalKey) => {
+    const [aOwner, aRow, aIndexStr] = arrivalKey.split(':')
+    if (aOwner !== ownerKey || aRow !== row) return
+    const aIndex = Number(aIndexStr)
+    let remaining = count
+    for (let i = cards.length - 1; i >= 0 && remaining > 0; i--) {
+      if (cards[i].index === aIndex && !hiddenSlots.has(i)) {
+        hiddenSlots.add(i)
+        remaining--
+      }
+    }
+  })
 
   return (
     <div className={rowCls} onClick={canDrop ? onRowClick : undefined}>
@@ -85,22 +116,30 @@ function MatchRow({
       <div className="match-row-score">{player.row_scores[row]}</div>
       <div className={specialCls}>
         {specialCard && (
-          <GwentCard card={specialCard} power={0} />
+          <div className={specialEntering ? 'gwent-card-special-entering' : ''}>
+            <GwentCard card={specialCard} power={0} />
+          </div>
         )}
       </div>
-      <div className="match-row-cards">
+      <div className="match-row-cards" data-flyzone={`row_${ownerKey}_${row}`}>
         {cards.map((boardCard, index) => {
           const card = cardsByIndex.get(boardCard.index)
           const selectable = canSelectBoardCard && card && !card.abilities.includes('hero')
+          const hidden = hiddenSlots.has(index)
           return card ? (
-            <GwentCard
+            <div
               key={`${owner}_${row}_${boardCard.index}_${index}`}
-              card={card}
-              power={boardCard.power}
-              weathered={weatherActive}
-              animation={animatingCards.get(`${ownerKey}_${boardCard.index}`) ?? null}
-              onClick={selectable ? () => onBoardCardClick?.(row, boardCard.index) : undefined}
-            />
+              className={hidden ? 'gwent-card-hidden-arrival' : undefined}
+              data-arriving={hidden ? `${ownerKey}:${row}:${boardCard.index}` : undefined}
+            >
+              <GwentCard
+                card={card}
+                power={boardCard.power}
+                weathered={weatherActive}
+                animation={animatingCards.get(`${ownerKey}_${boardCard.index}`) ?? null}
+                onClick={selectable ? () => onBoardCardClick?.(row, boardCard.index) : undefined}
+              />
+            </div>
           ) : (
             <CardChip key={`${owner}_${row}_${boardCard.index}_${index}`} card={boardCard} />
           )
@@ -108,7 +147,7 @@ function MatchRow({
         {rowGhosts.map((ghost) => {
           const card = cardsByIndex.get(ghost.cardIndex)
           return card ? (
-            <div key={ghost.id} className="gwent-card-ghost">
+            <div key={ghost.id} className="gwent-card-ghost" data-ghost-id={ghost.id}>
               <GwentCard card={card} power={ghost.power} animation="scorch" />
             </div>
           ) : null
@@ -130,6 +169,7 @@ export function MatchField({
   decoySelect,
   animatingCards,
   ghostCards,
+  arrivingBoard,
   onRowClick,
   onBoardCardClick,
 }: {
@@ -144,6 +184,7 @@ export function MatchField({
   decoySelect: boolean
   animatingCards: Map<string, string>
   ghostCards: GhostCard[]
+  arrivingBoard: Map<string, number>
   onRowClick: (row: RowKey) => void
   onBoardCardClick: (row: RowKey, cardIndex: number) => void
 }) {
@@ -162,6 +203,7 @@ export function MatchField({
             canSelectBoardCard={false}
             animatingCards={animatingCards}
             ghostCards={ghostCards}
+            arrivingBoard={arrivingBoard}
             onRowClick={() => onRowClick(row)}
           />
         ))}
@@ -182,6 +224,7 @@ export function MatchField({
             canSelectBoardCard={isMyTurn && decoySelect}
             animatingCards={animatingCards}
             ghostCards={ghostCards}
+            arrivingBoard={arrivingBoard}
             onRowClick={() => onRowClick(row)}
             onBoardCardClick={onBoardCardClick}
           />

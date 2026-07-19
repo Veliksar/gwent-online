@@ -36,6 +36,7 @@ export const ru: Locale = {
   mainMenu: {
     welcomePrefix: 'Добро пожаловать, ',
     welcomeSuffix: '!',
+    decks: 'Колоды',
     playBot: 'Играть с ботом',
     playOnline: 'Играть онлайн',
     developerMode: 'Режим разработчика',
@@ -109,6 +110,8 @@ export const ru: Locale = {
     errCreateRoom: 'Не удалось создать комнату',
     errLeave: 'Не удалось покинуть лобби',
     errStart: 'Не удалось начать матч',
+    deckNotChosen: 'Колода не выбрана',
+    configureDeck: 'Настроить колоду',
   },
 
   deck: {
@@ -120,6 +123,38 @@ export const ru: Locale = {
     saving: 'Сохранение...',
     saved: 'Колода сохранена',
     saveError: 'Ошибка сохранения колоды',
+  },
+
+  deckBuilder: {
+    loading: 'Загрузка карт...',
+    back: 'Назад',
+    leader: 'Лидер',
+    changeFaction: 'Сменить фракцию',
+    chooseFaction: 'Выберите фракцию',
+    chooseLeader: 'Выберите лидера',
+    cardCollection: 'Коллекция карт',
+    cardsInDeck: 'Карты в колоде',
+    statTotal: 'Всего карт',
+    statUnits: 'Карты юнитов',
+    statSpecial: 'Особые карты',
+    statStrength: 'Общая сила юнитов',
+    statHeroes: 'Герои',
+    save: 'Сохранить колоду',
+    saveAndReturn: 'Сохранить и вернуться в лобби',
+    saving: 'Сохранение...',
+    saved: 'Колода сохранена',
+    saveError: 'Не удалось сохранить колоду',
+    confirmFactionTitle: 'Сменить фракцию?',
+    confirmFactionText: 'Текущая колода будет заменена колодой выбранной фракции.',
+    confirm: 'Да',
+    cancel: 'Отмена',
+    factionDescriptions: {
+      realms: 'Берёт дополнительную карту из колоды за каждый выигранный раунд.',
+      nilfgaard: 'Выигрывает раунд, завершившийся вничью.',
+      monsters: 'Одна случайная карта юнита остаётся на поле после каждого раунда.',
+      scoiatael: 'Решает, кто ходит первым в начале игры.',
+      skellige: '2 случайные карты из кладбища возвращаются на поле в начале третьего раунда.',
+    } as Record<string, string>,
   },
 
   match: {

@@ -6,7 +6,6 @@ import { matchApi, type GameMatch } from '../api/match'
 import { useLobbyStore } from '../stores/lobbyStore'
 import { useMatchStore } from '../stores/matchStore'
 import { useAuthStore } from '../stores/authStore'
-import DeckSelector from '../components/DeckSelector'
 import { getEcho } from '../services/echo'
 import { useT } from '../i18n'
 
@@ -88,8 +87,9 @@ export default function LobbyPage() {
     })
   }, [])
 
-  const isUserReady = room?.members.find((m) => m.user_id === user?.id)?.ready
-  const hasDeck = room?.members.find((m) => m.user_id === user?.id)?.has_deck
+  const myMember = room?.members.find((m) => m.user_id === user?.id)
+  const isUserReady = myMember?.ready
+  const hasDeck = myMember?.has_deck
   const allReady = Boolean(room?.members.every((m) => m.ready) && room?.members.length === 2)
   const isHost = room?.host_user_id === user?.id
   const hostNickname = room?.members.find((m) => m.user_id === room?.host_user_id)?.nickname
@@ -432,16 +432,31 @@ export default function LobbyPage() {
           )}
         </div>
 
-        <div className="mb-4">
-          <DeckSelector
-            onSaved={(updatedRoom) => {
-              if (updatedRoom) {
-                setRoom(updatedRoom, roomCode)
-              } else {
-                refreshLobby()
-              }
-            }}
-          />
+        <div className="mb-4 border border-gwent-border rounded p-4 bg-gwent-card">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="text-sm font-bold text-gwent-gold mb-1">{t.deck.title}</h3>
+              {hasDeck && myMember?.deck_faction ? (
+                <div className="text-xs text-gray-300 truncate">
+                  {t.factions[myMember.deck_faction] ?? myMember.deck_faction}
+                  {myMember.deck_leader_id != null && (
+                    <span className="text-gray-500">
+                      {' — '}
+                      {t.leaders[myMember.deck_leader_id] ?? ''}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-500">{t.lobby.deckNotChosen}</div>
+              )}
+            </div>
+            <button
+              onClick={() => navigate('/deck?from=lobby')}
+              className="btn-secondary text-sm whitespace-nowrap"
+            >
+              {t.lobby.configureDeck}
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">

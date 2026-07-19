@@ -1,0 +1,430 @@
+/* ========================================================
+   DECK BUILDER - порт легаси public/css/deck-customization.css
+   (#deck-customization, .card-array, #card-leader, #deck-stats)
+   ======================================================== */
+
+.deck-builder {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 10, 10, 0.97);
+  color: goldenrod;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  overflow: hidden;
+  z-index: 50;
+}
+
+/* ---- Заголовок фракции (легаси #faction-title h1) ---- */
+.db-faction-title {
+  position: absolute;
+  top: 2.4%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6vw;
+}
+
+.db-faction-shield {
+  width: 2.6vw;
+  height: 2.6vw;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.db-faction-title h1 {
+  margin: 0;
+  font-size: 1.45vw;
+  color: #dedede;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+/* ---- Описание перка фракции (легаси #faction-description) ---- */
+.db-faction-description {
+  position: absolute;
+  top: 8.2%;
+  left: 20%;
+  width: 60%;
+  font-size: 1.14vw;
+  color: #ab977c;
+  text-align: center;
+}
+
+/* ---- Кнопки-опции (легаси .deck-options) ---- */
+.db-options {
+  position: absolute;
+  top: 13.5%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1.5vw;
+}
+
+.db-option-btn {
+  font-size: 1vw;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0.2vw 0.6vw;
+}
+
+.db-option-btn:hover {
+  color: goldenrod;
+  text-shadow: 0 0 0.5vw rgba(218, 165, 32, 0.6);
+}
+
+/* ---- Заголовки колонок (легаси .card-contianer-title) ---- */
+.db-column-title {
+  position: absolute;
+  top: 18.2%;
+  font-size: 1.3vw;
+  color: #959595;
+}
+
+.db-column-title-bank {
+  left: 8.5%;
+}
+
+.db-column-title-deck {
+  right: 8.5%;
+  text-align: right;
+}
+
+/* ---- Колонки карт (легаси .card-array) ---- */
+.db-card-array {
+  position: absolute;
+  top: 22.5%;
+  width: 34.4%;
+  height: 70%;
+  overflow-y: scroll;
+  padding: 0.1vw 1.1vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 84, 32, 0.5) transparent;
+}
+
+.db-card-array::-webkit-scrollbar {
+  width: 6px;
+}
+
+.db-card-array::-webkit-scrollbar-thumb {
+  background: rgba(111, 84, 32, 0.5);
+}
+
+.db-bank {
+  left: 8.275%;
+}
+
+.db-deck {
+  left: 58.4%;
+}
+
+/* ---- Карта-превью с бейджем количества (легаси .card-array .card-lg) ---- */
+.db-card {
+  position: relative;
+  width: 9.88vw;
+  height: 18.45vw;
+  margin-bottom: 0.75vw;
+  border: none;
+  border-radius: 1vw;
+  padding: 0;
+  cursor: pointer;
+  background-color: #171316;
+  background-image:
+    radial-gradient(circle at 50% 24%, rgba(201, 162, 39, 0.22), transparent 34%),
+    linear-gradient(145deg, #3b2c20, #111013 68%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.db-card:hover {
+  outline: 0.15vw outset goldenrod;
+}
+
+.db-card-count {
+  position: absolute;
+  top: 82.5%;
+  left: 72%;
+  width: 24%;
+  height: 7%;
+  font-size: 1.2vw;
+  color: #5f4923;
+  padding-left: 1.7vw;
+  text-align: left;
+  background-image: url('/img/icons/preview_count.png');
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* ---- Лидер (легаси #card-leader) ---- */
+.db-leader {
+  position: absolute;
+  top: 20.8%;
+  left: 46.6%;
+  width: 6.9%;
+  height: 27%;
+}
+
+.db-leader p {
+  margin: 0 0 0.4vw;
+  font-size: 1.1vw;
+  text-align: center;
+  color: #8f6c36;
+}
+
+.db-leader-card {
+  width: 100%;
+  height: 84.5%;
+  border: none;
+  border-radius: 0.5vw;
+  padding: 0;
+  cursor: pointer;
+  background-color: #171316;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.db-leader-card:hover {
+  outline: 0.15vw outset goldenrod;
+}
+
+/* ---- Статистика колоды (легаси #deck-stats) ---- */
+.db-stats {
+  position: absolute;
+  top: 50.5%;
+  left: 43.05%;
+  width: 14%;
+}
+
+.db-stat-label {
+  margin: 0.4vw 0 0;
+  color: #82735f;
+  font-size: 1.05vw;
+  text-align: center;
+}
+
+.db-stat-value {
+  margin: 0;
+  font-size: 1.2vw;
+  color: #9f7d3e;
+  text-align: left;
+  padding-left: 2.9vw;
+  margin-left: 3.4vw;
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 2.4vw;
+  min-height: 1.6vw;
+  line-height: 1.6vw;
+}
+
+.db-stat-value-invalid {
+  color: red;
+}
+
+.db-stat-count    { background-image: url('/img/icons/deck_stats_count.png'); }
+.db-stat-unit     { background-image: url('/img/icons/deck_stats_unit.png'); }
+.db-stat-special  { background-image: url('/img/icons/deck_stats_special.png'); }
+.db-stat-strength { background-image: url('/img/icons/deck_stats_strength.png'); }
+.db-stat-hero     { background-image: url('/img/icons/deck_stats_hero.png'); }
+
+/* ---- Кнопки внизу по центру (легаси #start-game) ---- */
+.db-actions {
+  position: absolute;
+  top: 86%;
+  left: 43.05%;
+  width: 14%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+  align-items: center;
+}
+
+.db-action-btn {
+  width: 100%;
+  min-height: 2vw;
+  font-size: 0.98vw;
+  white-space: nowrap;
+  color: white;
+  background-color: rgb(20, 20, 20);
+  border: 0.1vw ridge rgb(30, 30, 30);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0.3vw 0.6vw;
+}
+
+.db-action-btn:hover:not(:disabled) {
+  color: goldenrod;
+  border-color: #6d5210;
+}
+
+.db-action-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.db-save-status {
+  font-size: 0.9vw;
+  color: #7fbf7f;
+}
+
+.db-save-error {
+  font-size: 0.9vw;
+  color: #e07b7b;
+  text-align: center;
+}
+
+/* ---- Карусель выбора фракции/лидера (легаси #carousel) ---- */
+.db-carousel {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.9);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5vw;
+}
+
+.db-carousel-title {
+  position: absolute;
+  top: 12%;
+  width: 100%;
+  height: 7.5%;
+  background-color: rgba(10, 10, 10, 0.95);
+  box-shadow: 0 0 1vw #ffffff54;
+  color: goldenrod;
+  text-align: center;
+  font-size: 1.75vw;
+  line-height: 250%;
+}
+
+.db-carousel-item {
+  width: 11.3vw;
+  height: 21.3vw;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background-color: #171316;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.2s;
+}
+
+.db-carousel-item:hover {
+  transform: scale(1.03);
+}
+
+.db-carousel-item-current {
+  width: 13.75vw;
+  height: 25.9vw;
+  border: 0.3vw solid goldenrod;
+  box-shadow: 0 0 4vw goldenrod;
+  background-origin: border-box;
+}
+
+.db-carousel-caption {
+  position: absolute;
+  bottom: 14%;
+  left: 20%;
+  width: 60%;
+  text-align: center;
+  color: tan;
+  font-size: 1.1vw;
+}
+
+.db-carousel-caption h3 {
+  margin: 0 0 0.4vw;
+  color: goldenrod;
+  font-size: 1.3vw;
+}
+
+/* ---- Подтверждение смены фракции ---- */
+.db-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background-color: rgba(10, 10, 10, 0.92);
+}
+
+.db-confirm-box {
+  width: min(28rem, 86vw);
+  border: 0.2vw ridge rgb(40, 40, 40);
+  background-color: rgb(20, 20, 20);
+  color: tan;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.db-confirm-box h2 {
+  margin: 0 0 0.75rem;
+  color: goldenrod;
+  font-size: 1.2rem;
+}
+
+.db-confirm-box p {
+  margin: 0 0 1rem;
+}
+
+.db-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.db-confirm-actions button {
+  min-width: 7rem;
+  padding: 0.5rem 1rem;
+  color: goldenrod;
+  background-color: #4c390a66;
+  border: 0.2vw solid #1d180b;
+  border-radius: 1vw;
+  box-shadow: 0 0 2vw #6d5210;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ---- Назад (в углу) ---- */
+.db-back-btn {
+  position: absolute;
+  top: 1.2vw;
+  left: 1.2vw;
+  z-index: 5;
+  font-size: 0.95vw;
+  color: #ead8a8;
+  background: rgba(20, 17, 18, 0.86);
+  border: 1px solid #6f5420;
+  border-radius: 0.2vw;
+  padding: 0.25vw 0.7vw;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.db-back-btn:hover {
+  color: goldenrod;
+  border-color: #c9a227;
+}
+
+@media (max-width: 960px) {
+  .db-faction-title h1 { font-size: 2.2vw; }
+  .db-faction-description { font-size: 1.7vw; }
+  .db-option-btn { font-size: 1.6vw; }
+  .db-column-title { font-size: 1.9vw; }
+  .db-stat-label { font-size: 1.6vw; }
+  .db-stat-value { font-size: 1.8vw; min-height: 2.4vw; line-height: 2.4vw; background-size: 2.2vw; padding-left: 2.7vw; }
+  .db-action-btn { font-size: 1.6vw; }
+  .db-back-btn { font-size: 1.6vw; }
+}

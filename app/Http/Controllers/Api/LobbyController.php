@@ -8,6 +8,8 @@ use App\Models\LobbyMember;
 use App\Models\LobbyRoom;
 use App\Models\GameMatch;
 use App\Models\MatchPlayer;
+use App\Models\UserDeck;
+use App\Services\DeckValidator;
 use App\Services\MatchFlowService;
 use App\Models\User;
 use App\Events\LobbyJoined;
@@ -22,6 +24,28 @@ class LobbyController extends Controller
     public function __construct(
         private MatchFlowService $matchFlow
     ) {}
+
+    /**
+     * Активная сохранённая колода игрока подставляется в лобби автоматически,
+     * чтобы игрок с настроенной колодой мог сразу нажать «Готов».
+     */
+    private function memberDeckAttributes(User $user): array
+    {
+        $deck = UserDeck::where('user_id', $user->id)
+            ->orderByDesc('is_active')
+            ->orderByDesc('updated_at')
+            ->first();
+
+        if (!$deck) {
+            return [];
+        }
+
+        return [
+            'deck_faction' => $deck->faction,
+            'deck_leader_id' => $deck->leader_id,
+            'deck_cards' => $deck->cards,
+        ];
+    }
     public function join(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -55,11 +79,11 @@ class LobbyController extends Controller
                 ]);
             }
 
-            LobbyMember::create([
+            LobbyMember::create(array_merge([
                 'room_id' => $room->id,
                 'user_id' => $user->id,
                 'ready' => false,
-            ]);
+            ], $this->memberDeckAttributes($user)));
 
             if ($room->host_user_id === null) {
                 $room->update(['host_user_id' => $user->id]);
@@ -113,11 +137,11 @@ class LobbyController extends Controller
             ->first();
 
         if (!$existingMember) {
-            LobbyMember::create([
+            LobbyMember::create(array_merge([
                 'room_id' => $room->id,
                 'user_id' => $user->id,
                 'ready' => false,
-            ]);
+            ], $this->memberDeckAttributes($user)));
         }
 
         $room = $room->fresh(['members.user.profile']);
@@ -143,11 +167,11 @@ class LobbyController extends Controller
                 'host_user_id' => $user->id,
             ]);
 
-            LobbyMember::create([
+            LobbyMember::create(array_merge([
                 'room_id' => $room->id,
                 'user_id' => $user->id,
                 'ready' => false,
-            ]);
+            ], $this->memberDeckAttributes($user)));
 
             LobbyInvite::create([
                 'room_id' => $room->id,
@@ -263,8 +287,20 @@ class LobbyController extends Controller
         $validated = $request->validate([
             'faction' => 'required|string|in:realms,nilfgaard,monsters,scoiatael,skellige',
             'leader_id' => 'required|integer',
-            'cards' => 'required|array',
+            'cards' => 'required|array|min:1',
+            'cards.*' => 'array|size:2',
         ]);
+
+        // Честный PvP: правила колоды проверяются на сервере (канон DeckMaker)
+        try {
+            $normalized = DeckValidator::validate(
+                $validated['faction'],
+                (int) $validated['leader_id'],
+                $validated['cards']
+            );
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         $user = $request->user();
 
@@ -281,9 +317,9 @@ class LobbyController extends Controller
         }
 
         $member->update([
-            'deck_faction' => $validated['faction'],
-            'deck_leader_id' => $validated['leader_id'],
-            'deck_cards' => $validated['cards'],
+            'deck_faction' => $normalized['faction'],
+            'deck_leader_id' => $normalized['leader_id'],
+            'deck_cards' => $normalized['cards'],
             'ready' => false,
         ]);
 
@@ -342,6 +378,8 @@ class LobbyController extends Controller
                     'avatar_url' => $member->user->profile->avatar_url ?? null,
                     'ready' => $member->ready,
                     'has_deck' => !empty($member->deck_cards),
+                    'deck_faction' => $member->deck_faction,
+                    'deck_leader_id' => $member->deck_leader_id,
                 ];
             }),
             'created_at' => $room->created_at,

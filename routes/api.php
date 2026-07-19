@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CardsController;
+use App\Http\Controllers\Api\DeckController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\LobbyController;
 use App\Http\Controllers\Api\DeveloperSandboxController;
@@ -20,6 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::get('/profile/matches', [ProfileController::class, 'matches']);
     Route::get('/profile/stats', [ProfileController::class, 'stats']);
+
+    Route::get('/decks', [DeckController::class, 'index']);
+    Route::post('/decks', [DeckController::class, 'save']);
     
     Route::prefix('lobby')->group(function () {
         Route::post('/join', [LobbyController::class, 'join']);

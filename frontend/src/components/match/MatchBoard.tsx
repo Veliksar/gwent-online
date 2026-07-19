@@ -2,6 +2,7 @@ import type { CardDefinition } from '../../api/cards'
 import type { GameMatch, GraveChoice, MatchPlayer } from '../../api/match'
 import { useEffect, useState } from 'react'
 import { CardPreview } from './CardPreview'
+import { FlightLayer, type CardFlight } from './FlightLayer'
 import { GraveCarousel } from './GraveCarousel'
 import { GraveViewCarousel } from './GraveViewCarousel'
 import { MatchField, type GhostCard } from './MatchField'
@@ -40,6 +41,9 @@ export function MatchBoard({
   muliganPending,
   animatingCards,
   ghostCards,
+  arrivingBoard,
+  arrivingHand,
+  flights,
   opponentPlayedCard,
   onCardClick,
   onRowClick,
@@ -76,6 +80,9 @@ export function MatchBoard({
   muliganPending: boolean
   animatingCards: Map<string, string>
   ghostCards: GhostCard[]
+  arrivingBoard: Map<string, number>
+  arrivingHand: Set<number>
+  flights: CardFlight[]
   opponentPlayedCard?: CardDefinition | null
   onCardClick: (handPos: number, cardIndex: number) => void
   onRowClick: (row: RowKey) => void
@@ -213,6 +220,7 @@ export function MatchBoard({
               decoySelect={decoySelect}
               animatingCards={animatingCards}
               ghostCards={ghostCards}
+              arrivingBoard={arrivingBoard}
               onRowClick={onRowClick}
               onBoardCardClick={onBoardCardClick}
             />
@@ -220,6 +228,7 @@ export function MatchBoard({
               player={me}
               cardsByIndex={cardsByIndex}
               selectedHandPos={selectedHandPos}
+              arrivingHand={arrivingHand}
               onCardClick={onCardClick}
             />
           </section>
@@ -275,6 +284,8 @@ export function MatchBoard({
             <CardPreview card={opponentPlayedCard} />
           </div>
         )}
+
+        <FlightLayer flights={flights} />
       </div>
     </div>
   )

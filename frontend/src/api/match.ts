@@ -49,6 +49,13 @@ export interface FactionPassivesPending {
   emhyr_reveal: boolean
 }
 
+// Фракционное срабатывание (north/monsters/scoiatael/skellige) для уведомлений
+export interface FactionEvent {
+  seq: number
+  user_id: number
+  faction: 'realms' | 'monsters' | 'scoiatael' | 'skellige'
+}
+
 export interface RoundHistoryEntry {
   round: number
   winner_id: number | null
@@ -106,6 +113,7 @@ export interface GameMatch {
   grave_choices: GraveChoice[]
   pending_decoy: boolean
   faction_passives_pending: FactionPassivesPending
+  faction_events: FactionEvent[]
   started_at: string
   turn_started_at: string | null
   turn_timeout_seconds: number

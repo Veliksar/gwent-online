@@ -79,6 +79,13 @@ export default function MainMenu() {
             {t.mainMenu.playOnline}
           </Link>
 
+          <Link
+            to="/deck"
+            className="btn-secondary w-full py-3 block"
+          >
+            {t.mainMenu.decks}
+          </Link>
+
           {isDeveloperModeVisible() && (
             <Link
               to="/developer"
