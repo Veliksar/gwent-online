@@ -9,6 +9,7 @@ import { sandboxApi } from '../api/sandbox'
 import { cardsApi, type CardDefinition } from '../api/cards'
 import { lobbyApi } from '../api/lobby'
 import { getEcho } from '../services/echo'
+import { matchUiUrls, poolLargeUrls, poolSmallUrls, preloadImages } from '../utils/assetPreloader'
 import { useT } from '../i18n'
 import { GameEndScreen } from '../components/match/GameEndScreen'
 import { MatchBoard } from '../components/match/MatchBoard'
@@ -621,6 +622,16 @@ export default function MatchPage() {
       cancelled = true
     }
   }, [])
+
+  // Постепенная подгрузка графики матча (п.8): иконки UI и sm-карты пулов
+  // обеих фракций — вперёд, lg (превью/карусели) — фоном
+  useEffect(() => {
+    if (!match || cardsByIndex.size === 0) return
+    const factions = match.players.map((p) => p.deck_faction)
+    const cards = Array.from(cardsByIndex.values())
+    preloadImages([...matchUiUrls(), ...poolSmallUrls(cards, factions)], 'front')
+    preloadImages(poolLargeUrls(cards, factions), 'back')
+  }, [match?.id, cardsByIndex])
 
   const refreshState = useCallback(async () => {
     try {

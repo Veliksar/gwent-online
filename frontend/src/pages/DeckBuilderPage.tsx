@@ -5,6 +5,7 @@ import { cardsApi, type CardDefinition } from '../api/cards'
 import { decksApi, type UserDeck } from '../api/decks'
 import { lobbyApi, FACTIONS, FACTION_DEFAULT_DECKS } from '../api/lobby'
 import { cardLargeImageUrl, deckShieldImageUrl } from '../utils/cardAssets'
+import { deckBuilderUrls, preloadImages } from '../utils/assetPreloader'
 import { useCarouselKeys, useWheelStep } from '../utils/carouselControls'
 import { useT, useLanguage, translateAbilityDescription, translateCardName } from '../i18n'
 import type { Language } from '../stores/settingsStore'
@@ -162,6 +163,15 @@ export default function DeckBuilderPage() {
     applyDeck(active?.faction ?? 'realms')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cards, savedDecks])
+
+  // Постепенная подгрузка lg-графики (п.8): текущая фракция вперёд,
+  // остальные фракции догружаются фоном — смена фракции без задержек
+  useEffect(() => {
+    if (!cards) return
+    const { front, back } = deckBuilderUrls(cards, faction)
+    preloadImages(front, 'front')
+    preloadImages(back, 'back')
+  }, [cards, faction])
 
   // Пул карт фракции (канон makeBank): faction + neutral + weather + special, без лидеров.
   // Сортировка Card.compare: special, weather, затем юниты по силе (убыв.) и имени.

@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { lobbyApi } from '../api/lobby'
 import { matchApi, type GameMatch } from '../api/match'
+import { cardsApi } from '../api/cards'
+import { matchUiUrls, poolLargeUrls, poolSmallUrls, preloadImages } from '../utils/assetPreloader'
 import { useLobbyStore } from '../stores/lobbyStore'
 import { useMatchStore } from '../stores/matchStore'
 import { useAuthStore } from '../stores/authStore'
@@ -90,6 +92,36 @@ export default function LobbyPage() {
   const myMember = room?.members.find((m) => m.user_id === user?.id)
   const isUserReady = myMember?.ready
   const hasDeck = myMember?.has_deck
+
+  // Прогрев графики будущего матча ещё в лобби (п.8): иконки/фон доски,
+  // затем пулы карт фракций участников (sm вперёд, lg фоном)
+  const lobbyFactionsKey = room
+    ? room.members.map((m) => m.deck_faction ?? '').join(',')
+    : ''
+
+  useEffect(() => {
+    if (!room) return
+    preloadImages(matchUiUrls(), 'back')
+
+    const factions = room.members
+      .map((m) => m.deck_faction)
+      .filter((f): f is string => !!f)
+    if (factions.length === 0) return
+
+    let cancelled = false
+    cardsApi.fetchAll()
+      .then(({ cards }) => {
+        if (cancelled) return
+        preloadImages(poolSmallUrls(cards, factions), 'back')
+        preloadImages(poolLargeUrls(cards, factions), 'back')
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room?.id, lobbyFactionsKey])
   const allReady = Boolean(room?.members.every((m) => m.ready) && room?.members.length === 2)
   const isHost = room?.host_user_id === user?.id
   const hostNickname = room?.members.find((m) => m.user_id === room?.host_user_id)?.nickname
